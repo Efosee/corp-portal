@@ -1,9 +1,8 @@
+import { EmployeeTable } from "../widgets/employees-table";
 
 export const Employees = () => {
 
 	return(
-		<div> 
-			Здесь будет таблица сотрудников
-		</div>
+		<EmployeeTable />
 	)
 }

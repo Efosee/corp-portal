@@ -20,6 +20,10 @@ export class BaseApi extends Http {
 		};
 	}
 
+	async getByParams(params = {}, options) {
+		return await this.get(this.endpoint, params, options);
+	}
+
 	async getById(id, options) {
 		return await this.get(`${this.endpoint}/${id}`, {}, options);
 	}
