@@ -7,7 +7,7 @@ class Http {
 		};
 	}
 
-	async request(endpoint, options = {}) {
+	async request(endpoint, options = {}, withHeaders = false) {
 
 		const url = `${this.baseUrl}${endpoint}`;
 
@@ -28,8 +28,14 @@ class Http {
 			}
 
 			const data = await this.parseResponse(response);
-
+			if (withHeaders) {
+				return {
+					data,
+					headers: response.headers
+				};
+			}
 			return data;
+
 		} catch (error) {
 			let httpError = error;
 
@@ -53,48 +59,51 @@ class Http {
 		}
 	}
 
-	async get(endpoint, params = {}, options) {
+	async get(endpoint, params = {}, options, withHeaders) {
 		const queryString = this.buildQueryString(params);
 		const url = queryString ? `${endpoint}?${queryString}` : endpoint;
-		
-		return this.request(url, {...options, method: 'GET'});
+
+		return this.request(url, { ...options, method: 'GET' }, withHeaders);
 	}
 
-	async post(endpoint, body={}, options){
+	async post(endpoint, body = {}, options, withHeaders) {
 		return this.request(
 			endpoint,
 			{
 				...options,
 				method: 'POST',
 				body: JSON.stringify(body)
-			}
+			},
+			withHeaders
 		);
 	}
 
-	async put(endpoint, body={}, options){
+	async put(endpoint, body = {}, options, withHeaders) {
 		return this.request(
 			endpoint,
 			{
 				...options,
 				method: 'PUT',
 				body: JSON.stringify(body)
-			}
+			},
+			withHeaders
 		);
 	}
 
-	async patch(endpoint, body={}, options){
+	async patch(endpoint, body = {}, options, withHeaders) {
 		return this.request(
 			endpoint,
 			{
 				...options,
 				method: 'PATCH',
 				body: JSON.stringify(body)
-			}
+			},
+			withHeaders
 		);
 	}
 
-	async delete(endpoint, options){
-		this.request(endpoint, {...options, method: 'DELETE'});
+	async delete(endpoint, options, withHeaders) {
+		this.request(endpoint, { ...options, method: 'DELETE' }, withHeaders);
 	}
 
 	buildQueryString(params) {
@@ -118,4 +127,4 @@ class HttpError extends Error {
 	}
 }
 
-export {HttpError, Http};
+export { HttpError, Http };
