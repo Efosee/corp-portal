@@ -44,5 +44,5 @@ export const usePagination = (initialItemsPerPage = 20) => {
         itemPerPage,
 				setItemPerPage,
         apiParams
-    }), [currentPage, setPage, changePage, resetPagination, itemPerPage, apiParams]);
+    }), [currentPage, setPage, changePage, resetPagination, itemPerPage]);
 }

@@ -1,3 +1,6 @@
+export { Skeleton } from './skeleton/Skeleton';
+export { Loading } from './loading/Loading';
+export { Error } from './error/Error';
 export { SidebarIcons } from './icons/SidebarIcon';
 export { Navigation } from './navigation/Navigation';
 export { NavItem } from './nav-item/NavItem';

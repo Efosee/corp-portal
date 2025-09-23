@@ -37,12 +37,13 @@ export const PaginationControls = memo(({
 				Выберите кол-во страниц
 				<select
 					onChange={(e) => onSetItemsPerPage(e.target.value)}
+					defaultValue={10}
 					className={styles.paginationSelect}
 				>
-					<option value={10} selected>10</option>
-					<option value={15}>15</option>
-					<option value={20}>20</option>
-					<option value={30}>30</option>
+					<option defaultValue={10}>10</option>
+					<option defaultValue={15}>15</option>
+					<option defaultValue={20}>20</option>
+					<option defaultValue={30}>30</option>
 				</select>
 			</label>
 		</div>

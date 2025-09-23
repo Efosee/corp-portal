@@ -14,7 +14,9 @@ class EmployeeApi extends BaseApi {
 	}
 
 	async getEmployeesForTable(params = {}, options) {
-		const { data, totalItems, currentItems } = await this.getList(params, options);
+		//TODO: реализовать фильтрацию по hasTickets
+		const {hasTickets, ...apiParams} = params;
+		const { data, totalItems, currentItems } = await this.getList(apiParams, options);
 
 		const employeesWithTickets = await Promise.all(data.map(async (employeeData) => {
 			const ticketsCount = await ticketsApi.getTicketsCountByPersonId(employeeData.id, options);
