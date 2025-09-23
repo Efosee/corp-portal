@@ -1,10 +1,14 @@
+import { useEffect, useState } from "react";
 import { EmployeeRow } from "./EmployeeRow";
 import { useFetchEmployees } from "../model/useFetchEmployees";
-import {Table, TableHead, TableCell, TableRow, TableBody} from "../../../shared/ui/table";
+import { usePagination, PaginationControls } from "../../../features/employees-pagination";
+import { Table, TableHead, TableCell, TableRow, TableBody } from "../../../shared/ui/table";
 import { Paper } from "@mui/material";
 
 export const EmployeeTable = () => {
-	const { employees, loading, error, totalItems, currentItems } = useFetchEmployees({});
+	console.log("render EmployeeTable");
+	const pagination = usePagination(10);
+	const { employees, loading, error, totalItems, currentItems } = useFetchEmployees({pagination});
 
 	return (
 		<Paper>
@@ -34,13 +38,22 @@ export const EmployeeTable = () => {
 
 				<TableBody>
 					{employees.map(employee => (
-						<EmployeeRow 
+						<EmployeeRow
 							key={employee.id}
 							employee={employee}
 						/>
 					))}
 				</TableBody>
 			</Table>
+			<PaginationControls
+				currentItems={currentItems}
+				currentPage={pagination.currentPage}
+				totalItems={totalItems}
+				itemPerPage={pagination.itemPerPage}
+				onChangePage={pagination.changePage}
+				onSetPage={pagination.setPage}
+				onSetItemsPerPage={pagination.setItemPerPage}
+			/>
 		</Paper>
 	)
 }
