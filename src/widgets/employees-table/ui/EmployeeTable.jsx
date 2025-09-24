@@ -12,7 +12,7 @@ export const EmployeeTable = () => {
 	const pagination = usePagination(10);
 	const serverFilters = useServerFilter(pagination.resetPagination);
 	const serverSort = useServerSort();
-	const {process, setProcess, renderContent} = useProcessRender();
+	const { process, setProcess, renderContent } = useProcessRender();
 	const { employees, totalItems, currentItems } = useFetchEmployees({
 		pagination,
 		filters: serverFilters,
@@ -20,19 +20,7 @@ export const EmployeeTable = () => {
 		setProcess
 	});
 	const View = () => (
-		<Paper>
-			<ServerFiltersBar
-				filters={serverFilters.filters}
-				onFilterChange={serverFilters.updateFilters}
-				onReset={serverFilters.resetFilters}
-				hasActiveFilters={serverFilters.hasActiveFilters}
-			/>
-			<ServerSortBar
-				sort={serverSort.sort}
-				onUpdateSort={serverSort.updateSort}
-				onResetSort={serverSort.resetSort}
-				hasActiveSort={serverSort.hasActiveSort}
-			/>
+		<>
 			<Table>
 				<TableHead>
 					<TableRow>
@@ -75,14 +63,25 @@ export const EmployeeTable = () => {
 				onSetPage={pagination.setPage}
 				onSetItemsPerPage={pagination.setItemPerPage}
 			/>
-		</Paper>)
+		</>)
 
 	const Content = renderContent(process, View)
 
-	return  <Content 
-	// employees={employees} 
-	// pagination={pagination}
-	// currentItems={currentItems}
-	// totalItems={totalItems}
-	/>
+	return (
+		<Paper>
+			<ServerFiltersBar
+				filters={serverFilters.filters}
+				onFilterChange={serverFilters.updateFilters}
+				onReset={serverFilters.resetFilters}
+				hasActiveFilters={serverFilters.hasActiveFilters}
+			/>
+			<ServerSortBar
+				sort={serverSort.sort}
+				onUpdateSort={serverSort.updateSort}
+				onResetSort={serverSort.resetSort}
+				hasActiveSort={serverSort.hasActiveSort}
+			/>
+			<Content />
+		</Paper>
+	)
 }

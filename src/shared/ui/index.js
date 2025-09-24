@@ -7,3 +7,5 @@ export { NavItem } from './nav-item/NavItem';
 export { AppContainer } from './app-container/AppContainer';
 export { CollapseedItem } from './collapsed-item/CollapsedItem';
 export { Tooltip } from './tooltip/Tooltip';
+export { Toolbar } from './toolbar/Toolbar';
+export {OpenBarButton} from './toolbar/OpenBarButton';

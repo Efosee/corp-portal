@@ -12,6 +12,7 @@ export const useServerFilter = (resetPagination) => {
 		setFilters(prev => ({
 			...prev,
 			[key]: value === '' ? null : value
+			
 		}));
 		resetPagination();
 	}, []);
