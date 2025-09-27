@@ -15,35 +15,41 @@ export const PaginationControls = memo(({
 
 	return (
 		<div className={styles.paginationControls}>
-			<button onClick={() => onSetPage(1)} disabled={currentPage === 1}>
-				{"<<"}
-			</button>
-			<button onClick={() => onChangePage(-1)} disabled={currentPage === 1}>
-				{"<"}
-			</button>
+			<div className={styles.paginationNav}>
+				<button onClick={() => onSetPage(1)} disabled={currentPage === 1}>
+					{"<<"}
+				</button>
+				<button onClick={() => onChangePage(-1)} disabled={currentPage === 1}>
+					{"<"}
+				</button>
+			</div>
 
-			<span className={styles.paginationCurrentItems}> {startItem}-{endItem} </span>
-			<span className={styles.paginationDeciderItems}> / </span>
-			<span className={styles.paginationTotalItems}> {totalItems} </span>
+			<div className={styles.paginationInfo}>
+				<span className={styles.paginationCurrentItems}>{startItem}-{endItem}</span>
+				<span className={styles.paginationDeciderItems}>/</span>
+				<span className={styles.paginationTotalItems}>{totalItems}</span>
+			</div>
 
-			<button onClick={() => onChangePage(1)} disabled={currentPage === endPage}>
-				{">"}
-			</button>
-			<button onClick={() => onSetPage(endPage)} disabled={currentPage === endPage}>
-				{">>"}
-			</button>
+			<div className={styles.paginationNav}>
+				<button onClick={() => onChangePage(1)} disabled={currentPage === endPage}>
+					{">"}
+				</button>
+				<button onClick={() => onSetPage(endPage)} disabled={currentPage === endPage}>
+					{">>"}
+				</button>
+			</div>
 
 			<label className={styles.paginationLabel}>
-				Выберите кол-во страниц
+				Выберите кол-во строк
 				<select
 					onChange={(e) => onSetItemsPerPage(e.target.value)}
 					value={itemPerPage}
 					className={styles.paginationSelect}
 				>
-					<option defaultValue={10}>10</option>
-					<option defaultValue={15}>15</option>
-					<option defaultValue={20}>20</option>
-					<option defaultValue={30}>30</option>
+					<option value={10}>10</option>
+					<option value={15}>15</option>
+					<option value={20}>20</option>
+					<option value={30}>30</option>
 				</select>
 			</label>
 		</div>

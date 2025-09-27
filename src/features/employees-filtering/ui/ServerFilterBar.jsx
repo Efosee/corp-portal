@@ -1,8 +1,12 @@
-import { Select, MenuItem, FormControl, InputLabel, Button } from '@mui/material';
+import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import styles from '../style/filtering.module.scss';
 import { Toolbar, OpenBarButton } from '../../../shared/ui';
-import { useState } from 'react';
+import { 
+	useState } from 'react';
 import FilterListAltIcon from '@mui/icons-material/FilterListAlt';
+
+
+
 export const ServerFiltersBar = ({ filters, onFilterChange, onReset, hasActiveFilters }) => {
 	const [isActive, setIsActive] = useState(false);
 
@@ -17,6 +21,15 @@ export const ServerFiltersBar = ({ filters, onFilterChange, onReset, hasActiveFi
 };
 
 const View = ({ onFilterChange, filters, onClose, isActive, onReset }) => {
+	const customSX = {
+		'&.Mui-focused': {
+			transform: 'translate(14px, -20px) scale(0.8)', // Фиксируем позицию при фокусе
+			color: 'primary.main'
+		},
+		'&.MuiInputLabel-shrink': {
+			transform: 'translate(14px, -20px) scale(0.8)' // Фиксируем при наличии значения
+		}
+	}
 	return (
 		<Toolbar
 			onClose={onClose}
@@ -27,7 +40,7 @@ const View = ({ onFilterChange, filters, onClose, isActive, onReset }) => {
 		>
 			<div className={styles.filtersBar}>
 				<FormControl size="small" className={styles.filter}>
-					<InputLabel>Пол</InputLabel>
+					<InputLabel sx={customSX}>Пол</InputLabel>
 					<Select
 						value={filters.gender || ''}
 						onChange={(e) => onFilterChange('gender', e.target.value)}
@@ -39,7 +52,7 @@ const View = ({ onFilterChange, filters, onClose, isActive, onReset }) => {
 				</FormControl>
 
 				<FormControl size="small" className={styles.filter}>
-					<InputLabel>Подразделение</InputLabel>
+					<InputLabel sx={customSX}>Подразделение</InputLabel>
 					<Select
 						value={filters.department || ''}
 						onChange={(e) => onFilterChange('department', e.target.value)}
@@ -48,11 +61,14 @@ const View = ({ onFilterChange, filters, onClose, isActive, onReset }) => {
 						<MenuItem value="IT">IT</MenuItem>
 						<MenuItem value="HR">HR</MenuItem>
 						<MenuItem value="Finance">Finance</MenuItem>
+						<MenuItem value="Support">Support</MenuItem>
 					</Select>
 				</FormControl>
 
 				<FormControl size="small" className={styles.filter}>
-					<InputLabel>Заявки</InputLabel>
+					<InputLabel sx={customSX}>
+						Заявки
+					</InputLabel>
 					<Select
 						value={filters.hasTickets?.toString() || ''}
 						onChange={(e) => {
@@ -65,6 +81,6 @@ const View = ({ onFilterChange, filters, onClose, isActive, onReset }) => {
 					</Select>
 				</FormControl>
 			</div>
-		</Toolbar>
+		</Toolbar >
 	)
 }

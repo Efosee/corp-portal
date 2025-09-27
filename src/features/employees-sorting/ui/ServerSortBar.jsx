@@ -1,4 +1,4 @@
-import { Button} from "@mui/material";
+import { Button } from "@mui/material";
 import SortIcon from '@mui/icons-material/Sort';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
@@ -26,12 +26,13 @@ export const ServerSortBar = memo(({ sort, onUpdateSort, onResetSort, hasActiveS
 			onClose={() => setIsActive(false)}
 			onReset={onResetSort}
 			isActive={hasActiveSort}
+			sort={sort}
 		/> :
-		<OpenBarButton onShow={setIsActive} Icon={SortIcon} isActive={hasActiveSort}/>
+		<OpenBarButton onShow={setIsActive} Icon={SortIcon} isActive={hasActiveSort} />
 
 });
 
-const View = ({ onClose, activeSort, onUpdateSort, onReset, isActive }) => {
+const View = ({ onClose, activeSort, onUpdateSort, onReset, isActive, sort }) => {
 	return (
 		<Toolbar
 			onClose={onClose}
@@ -40,18 +41,29 @@ const View = ({ onClose, activeSort, onUpdateSort, onReset, isActive }) => {
 			className={styles.sortingToolbar}
 			caption={"Сортировка"}
 		>
-			<Button onClick={() => onUpdateSort(SORTING_FIELDS.FULL_NAME)}>
-				ФИО
-				{activeSort(SORTING_FIELDS.FULL_NAME)}
-			</Button>
-			<Button onClick={() => onUpdateSort(SORTING_FIELDS.BIRTH_DATE)}>
-				Дата рождения
-				{activeSort(SORTING_FIELDS.BIRTH_DATE)}
-			</Button>
-			<Button onClick={() => onUpdateSort(SORTING_FIELDS.TICKETS_COUNT)}>
-				По количеству заявок
-				{activeSort(SORTING_FIELDS.TICKETS_COUNT)}
-			</Button>
+			<div className={styles.sortingButtons}>
+				<Button
+					onClick={() => onUpdateSort(SORTING_FIELDS.FULL_NAME)}
+					className={sort.field === SORTING_FIELDS.FULL_NAME ? styles.active : ''}
+				>
+					ФИО
+					{activeSort(SORTING_FIELDS.FULL_NAME)}
+				</Button>
+				<Button
+					onClick={() => onUpdateSort(SORTING_FIELDS.BIRTH_DATE)}
+					className={sort.field === SORTING_FIELDS.BIRTH_DATE ? `${styles.active}` : ""}
+				>
+					Дата рождения
+					{activeSort(SORTING_FIELDS.BIRTH_DATE)}
+				</Button>
+				<Button
+					onClick={() => onUpdateSort(SORTING_FIELDS.TICKETS_COUNT)}
+					className={sort.field === SORTING_FIELDS.TICKETS_COUNT ? styles.active : ''}
+				>
+					По количеству заявок
+					{activeSort(SORTING_FIELDS.TICKETS_COUNT)}
+				</Button>
+			</div>
 		</Toolbar>
 	);
 }

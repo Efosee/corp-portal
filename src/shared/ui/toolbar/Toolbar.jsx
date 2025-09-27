@@ -3,7 +3,7 @@ import { Paper, Box, IconButton, Button, Typography } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 
 export const Toolbar = ({ children, onClose, isActive, onReset, caption, ...props }) => {
-
+	
 	return (
 		<Paper className={styles.toolbar} {...props}>
 			<Box className={styles.header}>
@@ -23,7 +23,9 @@ export const Toolbar = ({ children, onClose, isActive, onReset, caption, ...prop
 					onReset();
 					onClose();
 				}}
-					variant="outlined" size="small">
+					variant="contained" size="small"
+					className={styles.resetButton}
+					>
 					Сбросить
 				</Button>
 			)}
