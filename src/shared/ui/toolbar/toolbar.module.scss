@@ -1,0 +1,36 @@
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+
+	.caption {
+		font-weight: 700;
+		font-size: 16px;
+		letter-spacing: 1px;
+		margin: 0 auto;
+	}
+
+	@media (max-width: 768px) {
+		.caption {
+			font-size: 14px;
+		}
+	}
+}
+
+.content {
+	margin-bottom: 10px;
+}
+
+
+.openBarButton {
+	border-radius: 10px;
+	margin-right: 8px;
+	transition: all 0.2s ease;
+
+	&:hover {
+		background-color: rgba(25, 118, 210, 0.08);
+		transform: scale(1.05);
+	}
+
+}
