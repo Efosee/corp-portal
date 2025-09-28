@@ -73,3 +73,17 @@
     }
   }
 }
+
+.pageSort{
+	display: flex;
+	position: relative;
+
+	&>svg{
+		height: 18px;
+		margin-left: 6px;
+		@media (max-width: 768px) {
+			height: 15px;
+			margin-left: 4px;
+		}
+	}
+}

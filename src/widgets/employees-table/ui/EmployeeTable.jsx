@@ -1,11 +1,10 @@
 import { useFetchEmployees } from "../model/useFetchEmployees";
 import { usePagination, PaginationControls } from "../../../features/employees-pagination";
-import { useServerFilter, ServerFiltersBar } from "../../../features/employees-filtering";
-import { useServerSort, ServerSortBar } from "../../../features/employees-sorting";
+import { useServerFilter, ServerFiltersBar, usePageFilter } from "../../../features/employees-filtering";
+import { useServerSort, ServerSortBar, usePageSort } from "../../../features/employees-sorting";
 import { Table } from "../../../shared/ui/table";
 import { useProcessRender } from "../../../shared/hooks";
 import styles from "../styles/EmployeeTable.module.scss";
-import { usePageFilter } from '../../../features/employees-filtering';
 import { EmployeeTableHeader } from "./EmployeeTableHeader";
 import { EmployeeTableBody } from "./EmployeeTableBody";
 
@@ -29,6 +28,9 @@ export const EmployeeTable = () => {
 	const pageFilters = usePageFilter(employees);
 	const pageFilredEmp = pageFilters.hasActiveFilters ? pageFilters.filteredEmployees : employees;
 
+	const pageSort = usePageSort(pageFilredEmp);
+	const processedEmp = pageSort.sortedEmployees;
+
 	const View = () => (
 		<div className={styles.employeeTable}>
 			<div className={styles.header}>
@@ -39,9 +41,11 @@ export const EmployeeTable = () => {
 					<EmployeeTableHeader
 						onFilterChange={pageFilters.updateFilters}
 						filters={pageFilters.filters}
+						sort={pageSort.sort}
+						onUpdateSort={pageSort.updateSort}
 					/>
 					<EmployeeTableBody
-						employees={pageFilredEmp}
+						employees={processedEmp}
 					/>
 				</Table>
 			</div>

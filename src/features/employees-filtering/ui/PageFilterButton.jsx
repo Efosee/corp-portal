@@ -26,7 +26,7 @@ export const PageFilterButton = ({ children, onFilterChange, fieldFilters }) => 
 		values: [["Мужской", "male"], ["Женский", "female"]]
 	}
 */
-const FiltersList = ({ filters, onFilterChange, setIsActive }) => {
+const FiltersList = ({ filters, onFilterChange }) => {
 
 	return (
 		<div className={styles.pageFilterContainer}>
