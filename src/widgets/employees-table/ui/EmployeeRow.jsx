@@ -1,16 +1,19 @@
+import { useOpenDetails } from '../../../entities/employee';
+
 import { TableRow, TableCell } from '../../../shared/ui/table';
 import styles from '../styles/employeeTable.module.scss';
 
 
 
-export const EmployeeRow = ({ employee, onClick }) => {
+export const EmployeeRow = ({ employee }) => {
+	const openDetails = useOpenDetails();
 	const localFormatDate = (dateString) => {
 		const localDate = new Date(dateString).toLocaleDateString('ru-Ru')
 		return localDate.replaceAll(".", "-");
 	}
 
 	return (
-		<TableRow onClick={() => onClick(employee.id)} style={{ cursor: 'pointer' }}>
+		<TableRow onClick={() => openDetails(employee.id, employee)} style={{ cursor: 'pointer' }}>
 			<TableCell>
 				<span className={styles.cellFullName}>{employee.fullName}</span>
 			</TableCell>
