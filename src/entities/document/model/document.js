@@ -1,6 +1,5 @@
-
 export class Document {
-	constructor(
+	constructor({
 		id,
 		personId,
 		docType,
@@ -9,7 +8,7 @@ export class Document {
 		issueDate,
 		issuedBy,
 		valid
-	){
+	}){
 		this.id = id;
 		this.personId = personId;
 		this.docType = docType;

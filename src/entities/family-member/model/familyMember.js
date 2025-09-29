@@ -1,5 +1,5 @@
-export class Education {
-	constructor(
+export class FamilyMember {
+	constructor({
 		id,
 		personId,
 		level,
@@ -8,7 +8,7 @@ export class Education {
 		startDate,
 		endDate,
 		honours
-	) {
+	}) {
 		this.id = id;
 		this.personId = personId;
 		this.level = level;

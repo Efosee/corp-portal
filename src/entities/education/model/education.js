@@ -1,6 +1,6 @@
 
 export class Education {
-	constructor(
+	constructor({
 		id,
 		personId,
 		level,
@@ -9,7 +9,7 @@ export class Education {
 		startDate,
 		endDate,
 		honours
-	) {
+	}) {
 		this.id = id;
 		this.personId = personId;
 		this.level = level;

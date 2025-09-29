@@ -1,5 +1,5 @@
 export class Employment {
-	constructor(
+	constructor({
 		id,
 		personId,
 		organization,
@@ -9,7 +9,7 @@ export class Employment {
 		current,
 		employmentType,
 		experience
-	) {
+	}) {
 		this.id = id;
 		this.personId = personId;
 		this.organization = organization;
