@@ -1,0 +1,17 @@
+.container{
+	padding: 20px 30px;
+}
+.notFound{
+	display: flex;
+	justify-content: center;
+
+	&:global(.css-o2za6n-MuiTypography-root){
+		margin-top: 40px;
+		color: #1976d2;
+		font-weight: 400;
+	}
+}
+
+.cancelBtn{
+	background-color: gray !important;
+}

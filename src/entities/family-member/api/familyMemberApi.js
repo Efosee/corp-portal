@@ -7,7 +7,7 @@ class FamilyMemberApi extends BaseApi {
 	}
 	
 	async getFamilyMember(id, options){
-		const familyMemberData = await this.getById(id, options);
+		const familyMemberData = await this.getByParams(id, options);
 		return new FamilyMember(familyMemberData);
 	}
 

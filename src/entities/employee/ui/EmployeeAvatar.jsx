@@ -1,6 +1,6 @@
 import styles from '../styles/employee.module.scss';
 
-export const EmployeeAvatar = ({imgSrc, fullName="иван иван иван"}) => {
+export const EmployeeAvatar = ({imgSrc, fullName=". . ."}) => {
 
 	const altText = fullName.split(" ").reduce((acc, value,) => acc + value[0].toUpperCase(), '');
 
