@@ -1,0 +1,4664 @@
+Директория - D:\Programming\frontend\corp-portal\src
+
+Директория - D:\Programming\frontend\corp-portal\src\app
+
+Файл - App.jsx
+Код:
+import { RouterProvider } from 'react-router';
+
+import './styles/App.css';
+import { router } from './providers/router';
+
+function App() {
+	return (
+		<RouterProvider router={router} />
+	)
+}
+
+export default App
+
+
+Файл - index.jsx
+Код:
+import { createRoot } from 'react-dom/client';
+import { StrictMode } from 'react';
+import './styles/index.css'
+import App from './App.jsx'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+
+
+Директория - D:\Programming\frontend\corp-portal\src\app\providers
+
+Директория - D:\Programming\frontend\corp-portal\src\app\providers\router
+
+Файл - config.js
+Код:
+import { Dashboards, Employees, Root, EmployeeProfile } from '../../../pages';
+
+export const routes = [
+	{
+		path: "/",
+		Component: Root,
+		children: [
+			{ index: true, Component: Dashboards },
+			{path: "/employees", Component: Employees, children: [
+				{path: "/employees/:id", Component: EmployeeProfile}
+			]
+			}
+		]
+	}
+]
+
+Файл - index.js
+Код:
+import { createBrowserRouter } from 'react-router';
+import {routes} from './config';
+
+export const router = createBrowserRouter(routes);
+
+
+Директория - D:\Programming\frontend\corp-portal\src\app\styles
+
+Файл - App.css
+Код:
+
+
+
+Файл - index.css
+Код:
+*{
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+	font-family: "Inter", sans-serif;
+}
+:root {
+  font-weight: 400;
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\entities
+
+Файл - index.js
+Код:
+export { Document } from "./document/model/document";
+export { documentApi } from "./document/api/documentApi";
+export { Education } from "./education/model/education";
+export { educationApi } from "./education/api/educationApi";
+export { Employee } from "./employee/model/employee";
+export { EmployeeInTable } from "./employee/model/employeeInTable";
+export { useOpenDetails } from "./employee/model/useOpenDetails"
+export { employeeApi } from "./employee/api/employeeApi";
+export { Employment } from "./employment/model/employment";
+export { employmentApi } from "./employment/api/employmentApi";
+export { FamilyMember } from "./family-member/model/familyMember";
+export { familyMemberApi } from "./family-member/api/familyMemberApi";
+export { Ticket } from "./ticket/model/ticket";
+export { ticketsApi } from "./ticket/api/ticketApi";
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\document
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\document\api
+
+Файл - documentApi.js
+Код:
+import { BaseApi, API_CONFIG } from "../../../shared/api";
+import { Document } from "../model/document";
+
+class DocumentApi extends BaseApi {
+	constructor() {
+		super(API_CONFIG.BASE_URL, API_CONFIG.ENDPOINTS.DOCUMENTS);
+	}
+	
+	async getDocuments(id, options){
+		const documentData = await this.getById(id, options);
+		return new Document(documentData);
+	}
+
+	async getDocumentsByPersonId(personId, options) {
+		const documentsData = await this.getByParams({ personId }, options);
+		return documentsData.map(documentData => new Document(documentData));
+	}
+
+}
+
+export const documentApi = new DocumentApi();
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\document\model
+
+Файл - document.js
+Код:
+export class Document {
+	constructor({
+		id,
+		personId,
+		docType,
+		series,
+		number,
+		issueDate,
+		issuedBy,
+		valid
+	}){
+		this.id = id;
+		this.personId = personId;
+		this.docType = docType;
+		this.series = series;
+		this.number = number;
+		this.issueDate = issueDate;
+		this.issuedBy = issuedBy;
+		this.valid = valid;
+	}
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\education
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\education\api
+
+Файл - educationApi.js
+Код:
+import { BaseApi, API_CONFIG } from "../../../shared/api";
+import { Education } from "../model/education";
+
+class EducationApi extends BaseApi {
+	constructor() {
+		super(API_CONFIG.BASE_URL, API_CONFIG.ENDPOINTS.EDUCATIONS);
+	}
+	
+	async getEducation(id, options){
+		const educationData = await this.getById(id, options);
+		return new Education(educationData);
+	}
+
+	async getEducationsByPersonId(personId, options) {
+		const educationsData = await this.getByParams({ personId }, options);
+		return educationsData.map(educationData => new Education(educationData));
+	}
+
+}
+
+export const educationApi = new EducationApi();
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\education\model
+
+Файл - education.js
+Код:
+
+export class Education {
+	constructor({
+		id,
+		personId,
+		level,
+		institution,
+		speciality,
+		startDate,
+		endDate,
+		honours
+	}) {
+		this.id = id;
+		this.personId = personId;
+		this.level = level;
+		this.institution = institution;
+		this.speciality = speciality;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.honours = honours;
+	}
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\employee
+
+Файл - index.js
+Код:
+export { EmployeeAvatar } from "./ui/EmployeeAvatar";
+export { Employee } from "./model/employee";
+export { EmployeeInTable } from "./model/employeeInTable";
+export { employeeApi } from "./api";
+export {useOpenDetails} from "./model/useOpenDetails";
+
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\employee\api
+
+Файл - employeeApi.js
+Код:
+import { BaseApi, API_CONFIG } from "../../../shared/api";
+import { Employee } from "../model/employee";
+import { EmployeeInTable } from "../model/employeeInTable";
+import { ticketsApi } from "../../ticket/api/ticketApi";
+
+class EmployeeApi extends BaseApi {
+	constructor() {
+		super(API_CONFIG.BASE_URL, API_CONFIG.ENDPOINTS.PERSONS);
+	}
+
+	async getEmployee(id, options) {
+		const employeeData = await this.getById(id, options);
+		return new Employee(employeeData);
+	}
+
+	async getEmployeesForTable(params = {}, options) {
+		//TODO: реализовать фильтрацию по hasTickets
+		const {hasTickets, ...apiParams} = params;
+		const { data, totalItems, currentItems } = await this.getList(apiParams, options);
+
+		const employeesWithTickets = await Promise.all(data.map(async (employeeData) => {
+			const ticketsCount = await ticketsApi.getTicketsCountByPersonId(employeeData.id, options);
+			return new EmployeeInTable(employeeData, ticketsCount);
+		}));
+		return {
+			data: employeesWithTickets,
+			totalItems,
+			currentItems
+		};
+	}
+};
+
+export const employeeApi = new EmployeeApi();
+
+
+Файл - index.js
+Код:
+export { employeeApi } from "./employeeApi";
+
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\employee\model
+
+Файл - employee.js
+Код:
+
+export class Employee {
+	constructor({
+		id, 
+		lastName, 
+		firstName, 
+		middleName, 
+		birthDate, 
+		gender, 
+		citizenship, 
+		maritalStatus, 
+		address, 
+		phone, 
+		email, 
+		consent, 
+		department
+	}) {
+		this.id = id;
+		this.lastName = lastName;
+		this.firstName = firstName;
+		this.middleName = middleName;
+		this.birthDate = birthDate;
+		this.gender = gender;
+		this.citizenship = citizenship;
+		this.maritalStatus = maritalStatus;
+		this.address = address;
+		this.phone = phone;
+		this.email = email;
+		this.consent = consent;
+		this.department = department;
+	}
+
+	get fullName() {
+		return `${this.lastName} ${this.firstName} ${this.middleName}`;
+	};
+
+
+}
+
+Файл - employeeInTable.js
+Код:
+import { Employee } from "./employee";
+
+export class EmployeeInTable extends Employee {
+	constructor(employeeData, ticketsCount) {
+		super(employeeData);
+		this.ticketsCount = ticketsCount;
+	}
+
+	get hasTickets() {
+		return this.ticketsCount > 0;
+	}
+}
+
+
+Файл - index.js
+Код:
+
+
+Файл - useOpenDetails.js
+Код:
+import { useCallback } from "react";
+import { useNavigate, useLocation } from "react-router"
+
+export const useOpenDetails = () => {
+	const navigate = useNavigate();
+	const location = useLocation();
+
+	const openDetails = useCallback((id, data) => {
+		navigate(`${location.pathname}/${id}`, {state: {data}});
+	}, []);
+
+	return openDetails;
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\employee\styles
+
+Файл - employee.module.scss
+Код:
+.avatar {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	background-color: rgba(255, 255, 255, 0.2);
+	font-size: 24px;
+	border: 2px solid rgba(255, 255, 255, 0.3);
+
+	&Icon{
+		padding:20px;
+		color: #fff;
+	}
+
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\employee\ui
+
+Файл - EmployeeAvatar.jsx
+Код:
+import styles from '../styles/employee.module.scss';
+
+export const EmployeeAvatar = ({imgSrc, fullName=". . ."}) => {
+
+	const altText = fullName.split(" ").reduce((acc, value,) => acc + value[0].toUpperCase(), '');
+
+	return(
+		<div className={styles.avatar}>
+			{imgSrc ? 
+			<img src={imgSrc} alt={altText}/> :
+			<div className={styles.avatarIcon}> {altText} </div>
+			}
+		</div>
+	)
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\employment
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\employment\api
+
+Файл - employmentApi.js
+Код:
+import { BaseApi, API_CONFIG } from "../../../shared/api";
+import {Employment} from "../model/employment";
+
+class EmploymentApi extends BaseApi {
+	constructor() {
+		super(API_CONFIG.BASE_URL, API_CONFIG.ENDPOINTS.EMPLOYMENTS);
+	}
+	
+	async getEmployment(id, options){
+		const employmentData = await this.getById(id, options);
+		return new Employment(employmentData);
+	}
+
+	async getEmploymentsByPersonId(personId, options) {
+		const employmentsData = await this.getByParams({ personId }, options);
+		return employmentsData.map(employmentData => new Employment(employmentData));
+	}
+
+}
+
+export const employmentApi = new EmploymentApi();
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\employment\model
+
+Файл - employment.js
+Код:
+export class Employment {
+	constructor({
+		id,
+		personId,
+		organization,
+		position,
+		hireDate,
+		fireDate,
+		current,
+		employmentType,
+		experience
+	}) {
+		this.id = id;
+		this.personId = personId;
+		this.organization = organization;
+		this.position = position;
+		this.hireDate = hireDate;
+		this.fireDate = fireDate;
+		this.current = current;
+		this.employmentType = employmentType;
+		this.experience = experience;
+	}
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\family-member
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\family-member\api
+
+Файл - familyMemberApi.js
+Код:
+import { BaseApi, API_CONFIG } from "../../../shared/api";
+import {FamilyMember} from "../model/familyMember";
+
+class FamilyMemberApi extends BaseApi {
+	constructor() {
+		super(API_CONFIG.BASE_URL, API_CONFIG.ENDPOINTS.FAMILY_MEMBERS);
+	}
+	
+	async getFamilyMember(id, options){
+		const familyMemberData = await this.getByParams(id, options);
+		return new FamilyMember(familyMemberData);
+	}
+
+	async getFamilyMembersByPersonId(personId, options) {
+		const familyMembersData = await this.getByParams({ personId }, options);
+		return familyMembersData.map(familyMemberData => new FamilyMember(familyMemberData));
+	}
+
+}
+
+export const familyMemberApi = new FamilyMemberApi();
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\family-member\model
+
+Файл - familyMember.js
+Код:
+export class FamilyMember {
+	constructor({
+      id,
+      personId,
+      relativeId,
+      relation,
+      fullName, 
+      birthDate,
+      phone
+	}) {
+		 this.id = id;
+      this.personId = personId;
+      this.relativeId = relativeId;
+      this.relation = relation;
+      this.fullName = fullName;
+      this.birthDate = birthDate;
+      this.phone = phone;
+	}
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\ticket
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\ticket\api
+
+Файл - ticketApi.js
+Код:
+import { BaseApi, API_CONFIG } from "../../../shared/api";
+import { Ticket } from "../model/ticket";
+
+class TicketApi extends BaseApi {
+	constructor() {
+		super(API_CONFIG.BASE_URL, API_CONFIG.ENDPOINTS.TICKETS);
+	}
+
+	async getTicket(id, options){
+			const ticketData = await this.getById(id, options);
+			return new Ticket(ticketData);
+		}
+
+	async getTicketsByPersonId(personId, options) {
+		const ticketsData = await this.getByParams({ personId }, options)
+		return ticketsData.map(ticketData => new Ticket(ticketData))
+	}
+
+	async getTicketsCountByPersonId(personId, options) {
+		try {
+			const tickets = await this.getTicketsByPersonId(personId, options);
+			return tickets.length;
+		} catch (error) {
+			console.error(`Failed to fetch tickets count for personId=${personId}:`, error);
+			return 0;
+		}
+	}
+}
+
+export const ticketsApi = new TicketApi();
+
+Директория - D:\Programming\frontend\corp-portal\src\entities\ticket\model
+
+Файл - ticket.js
+Код:
+
+
+export class Ticket {
+	constructor({id, personId, title, category, priority, status, createdAt, updatedAt, description}) {
+		this.id = id;
+		this.personId = personId;
+		this.title = title;
+		this.category = category;
+		this.priority = priority;
+		this.status = status;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+		this.description = description;
+	}
+}
+
+
+Директория - D:\Programming\frontend\corp-portal\src\features
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employee-details
+
+Файл - index.js
+Код:
+export {useFetchDetails} from "./model/useFetchDetails";
+export {PersonDetails} from "./ui/PersonDetails";
+export {DocumentDetails} from "./ui/DocumentDetails";
+export {FamilyMemberDetails} from "./ui/FamilyMemberDetails";
+export {EducationDetails} from "./ui/EducationDetails";
+export {EmploymentDetails} from "./ui/EmploymentDetails";
+export {TicketDetails} from "./ui/TicketDetails"
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employee-details\config
+
+Файл - selectFields.js
+Код:
+export const SELECT_FIELDS = {
+	GENDER: [
+		{ value: "male", label: "Мужской" },
+		{ value: "female", label: "Женский" },
+	],
+	DEPARTMENT: ["HR", "IT", "Support", "Finance", "Marketing"],
+	MARITAL_STATUS: [
+		"холост/незамужем",
+		"женат",
+		"замужем",
+		"разведён",
+		"разведена",
+		"вдовец",
+		"вдова"
+	],
+
+	DOC_TYPES: ["паспорт", "загранпаспорт", "водительское"],
+
+	EDUCATION_LEVELS: ["среднее", "СПО", "высшее", "магистратура"],
+
+	EMPLOYMENT_TYPES: ["полная", "частичная", "фриланс"],
+
+	RELATION_TYPES: ["сестра", "брат", "отец", "супруг", "дочь", "сын", "мать"],
+
+	TICKET_CATEGORY: {
+		hardware: "Оборудование",
+		software: "ПО",
+		payments: "Оплата",
+		access: "Доступ"
+	},
+	TICKET_STATUS: {
+		open: "Открыт",
+		in_progress: "В работе",
+		closed: "Закрыт",
+		resolved: "Решен"
+	},
+	TICKET_PRIORITIES: ["низкий", "средний", "высокий", "срочный"]
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employee-details\model
+
+Файл - fetchApi.js
+Код:
+import {
+	documentApi, employeeApi, employmentApi, educationApi, ticketsApi, familyMemberApi
+} from "../../../entities";
+
+export const FETCH_API = {
+	persons: employeeApi.getEmployee.bind(employeeApi),
+	documents: documentApi.getDocumentsByPersonId.bind(documentApi),
+	familyMembers: familyMemberApi.getFamilyMembersByPersonId.bind(familyMemberApi),
+	educations: educationApi.getEducationsByPersonId.bind(educationApi),
+	employments: employmentApi.getEmploymentsByPersonId.bind(employmentApi),
+	tickets: ticketsApi.getTicketsByPersonId.bind(ticketsApi)
+}
+
+Файл - useFetchDetails.js
+Код:
+import { useState, useCallback, useMemo, useEffect } from "react"
+import { FETCH_API } from "./fetchApi";
+
+// tab чтобы понять какое api использовать
+// initState - после перехода с employeeTables будут основные данные пользователя
+export const useFetchDetails = (personId, initTab, initState) => {
+	const [data, setData] = useState();
+	const [tab, setTab] = useState(initTab);
+	const [employee, setEmployee] = useState(initState);
+	const fetch = useMemo(() => FETCH_API[tab], [tab]);
+
+	const fetchData = useCallback(async () => {
+		const data = await fetch(personId);
+		setData(data);
+	}, [personId, tab]);
+
+	useEffect(() => {
+		fetchData();
+	}, [tab, personId]);
+
+	useEffect(() => {
+		if (!initState) {
+			FETCH_API.persons(personId)
+				.then(employee => setEmployee(employee));
+		}
+	}, [personId])
+
+	return {
+		setTab,
+		tab,
+		data,
+		employee
+	}
+}
+
+Файл - useFormUpdate.js
+Код:
+import { useState, useCallback, useMemo, useEffect } from "react";
+
+export const useFormUpdate = (data) => {
+	const [form, setForm] = useState(data);
+	const [changedIndexs, setChangedIndexs] = useState([]);
+
+	useEffect(() => {
+		setForm(data);
+	}, [data])
+
+	const changed = useMemo(() => {
+		return JSON.stringify(form) !== JSON.stringify(data);
+	}, [form, data]);
+
+			const deleteIndexs = () => {
+			changedIndexs.forEach(i => {
+				if (JSON.stringify(form[i]) === JSON.stringify(data[i])){
+					console.log("delete index")
+					setChangedIndexs(prev => {
+						return prev.filter(index => index !== i)
+					});
+				};
+			});
+		};
+
+	const changeForm = useCallback((key, value, index) => {
+		setForm(prev => {
+			//Если массив объектов
+			if (prev instanceof Array) {
+				const items = [...prev];
+				items[index] = { ...items[index], [key]: value };
+				return items;
+			}
+			//Если просто объект
+			return { ...prev, [key]: value }
+		});
+		setChangedIndexs(prev => {
+			const set = new Set([...prev, index]);
+			return Array.from(set);
+		});
+	}, []);
+
+		useEffect(() => {
+			deleteIndexs()
+		}, [changedIndexs]);
+
+	const resetFormIndex = useCallback((i) => {
+		if (i === undefined) return;
+		setForm(prev => {
+			const items = [...prev];
+			items[i] = { ...data[i] };
+			return items;
+		});
+		setChangedIndexs(prev => {
+			return prev.filter(index => index !== i)
+		});
+	}, [data]);
+
+	const resetForm = useCallback(() => {
+		setForm(data)
+	}, [data])
+
+
+	return {
+		form,
+		changeForm,
+		resetForm,
+		changed,
+		changedIndexs,
+		resetFormIndex
+	}
+}
+
+ // Реализация через сброс неактивного элемента формы
+	// const changeForm = useCallback((key, value, index) => {
+	// 	console.log( index, changedIndex)
+	// 	if (index !== undefined && index === changedIndex) {
+	// 		setForm(prev => {
+	// 			//Если массив объектов
+	// 			if (prev instanceof Array) {
+	// 				const items = [...prev];
+	// 				items[index] = { ...items[index], [key]: value };
+	// 				return items;
+	// 			}
+	// 			//Если просто объект
+	// 			return { ...prev, [key]: value }
+	// 		});
+	// 	} else {
+	// 		if (index !== undefined) {
+	// 			resetFormIndex(changedIndex);
+	// 			setChangedIndex(index);
+	// 		};
+	// 		setForm(prev => {
+	// 			//Если массив объектов
+	// 			if (prev instanceof Array) {
+	// 				const items = [...prev];
+	// 				items[index] = { ...items[index], [key]: value };
+	// 				return items;
+	// 			}
+	// 			//Если просто объект
+	// 			return { ...prev, [key]: value }
+	// 		});
+			
+	// 	}
+	// }, [changedIndex]);
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employee-details\styles
+
+Файл - employeeDetails.module.scss
+Код:
+.container{
+	padding: 20px 30px;
+}
+.notFound{
+	display: flex;
+	justify-content: center;
+
+	&:global(.css-o2za6n-MuiTypography-root){
+		margin-top: 40px;
+		color: #1976d2;
+		font-weight: 400;
+	}
+}
+
+.cancelBtn{
+	background-color: gray !important;
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employee-details\ui
+
+Файл - ControlChangeBtn.jsx
+Код:
+import { Box, Button } from "@mui/material"
+import styles from '../styles/employeeDetails.module.scss';
+
+export const ControlChangeBtn = ({onSave, onReset}) => {
+	return (
+		<Box sx={{ mt: 3, display: "flex", gap: 1 }}>
+			<Button variant="contained" color="primary" onClick={onSave}>
+				Сохранить изменения
+			</Button>
+			<Button variant="contained" className={styles.cancelBtn} onClick={onReset}>
+				Сброс
+			</Button>
+		</Box>
+	)
+}
+
+Файл - DocumentDetails.jsx
+Код:
+import {
+	Box,
+	Grid,
+	TextField,
+	Select,
+	MenuItem,
+	FormControl,
+	InputLabel,
+	Checkbox,
+	FormControlLabel,
+	Paper,
+	Typography
+} from "@mui/material";
+
+import { SELECT_FIELDS } from "../config/selectFields";
+import { useFormUpdate } from "../model/useFormUpdate";
+import styles from "../styles/employeeDetails.module.scss";
+import { ControlChangeBtn } from "./ControlChangeBtn";
+
+
+export const DocumentDetails = ({ data, onSave }) => {
+
+	const { form, changeForm, changed, changedIndexs, resetFormIndex } = useFormUpdate(data);
+
+	if (!(form instanceof Array)) {
+		return null
+	} else if (!form?.length) {
+		return <Typography variant="h2">Документы не добавлены</Typography>;
+	}
+
+
+
+	return (
+		<div className={styles.container}>
+			<Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+				{form.map((doc, index) => (
+					<Paper
+						key={index}
+						elevation={3}
+						sx={{
+							p: 3,
+							backgroundColor: "#e3f2fd", // светло-синий фон в стиле MUI
+						}}
+					>
+						<Typography variant="h6" gutterBottom>
+							Документ {index + 1}
+						</Typography>
+
+						<Grid container spacing={3}>
+							{/* Тип документа */}
+							<Grid size={{ xs: 12, md: 4 }}>
+								<FormControl fullWidth>
+									<InputLabel>Тип документа</InputLabel>
+									<Select
+										value={doc.docType || ""}
+										label="Тип документа"
+										onChange={(e) =>
+											changeForm("docType", e.target.value, index)
+										}
+									>
+										{SELECT_FIELDS.DOC_TYPES.map((t) => (
+											<MenuItem key={t} value={t}>
+												{t}
+											</MenuItem>
+										))}
+									</Select>
+								</FormControl>
+							</Grid>
+
+							{/* Серия */}
+							<Grid size={{ xs: 12, md: 4 }}>
+								<TextField
+									label="Серия"
+									fullWidth
+									value={doc.series || ""}
+									onChange={(e) => changeForm("series", e.target.value, index)}
+								/>
+							</Grid>
+
+							{/* Номер */}
+							<Grid size={{ xs: 12, md: 4 }}>
+								<TextField
+									label="Номер"
+									fullWidth
+									value={doc.number || ""}
+									onChange={(e) => changeForm("number", e.target.value, index)}
+								/>
+							</Grid>
+
+							{/* Дата выдачи */}
+							<Grid size={{ xs: 12, md: 4 }}>
+								<TextField
+									type="date"
+									label="Дата выдачи"
+									fullWidth
+									value={doc.issueDate || ""}
+									onChange={(e) =>
+										changeForm("issueDate", e.target.value, index)
+									}
+								/>
+							</Grid>
+
+							{/* Кем выдан */}
+							<Grid size={{ xs: 12, md: 4 }}>
+								<TextField
+									label="Кем выдан"
+									fullWidth
+									value={doc.issuedBy || ""}
+									onChange={(e) =>
+										changeForm("issuedBy", e.target.value, index)
+									}
+								/>
+							</Grid>
+
+							{/* Действителен */}
+							<Grid size={{ xs: 12, md: 4 }}>
+								<FormControlLabel
+									control={
+										<Checkbox
+											checked={!!doc.valid}
+											onChange={(e) =>
+												changeForm("valid", e.target.checked, index)
+											}
+										/>
+									}
+									label="Действителен"
+								/>
+							</Grid>
+						</Grid>
+						{
+							changed && changedIndexs.includes(index) &&
+							<ControlChangeBtn onSave={() => onSave(index)} onReset={() => resetFormIndex(index)} />
+						}
+					</Paper>
+				))}
+			</Box>
+		</div>
+	);
+};
+
+
+Файл - EducationDetails.jsx
+Код:
+import {
+	Box,
+	Grid,
+	TextField,
+	Paper,
+	Typography,
+	FormControl,
+	InputLabel,
+	Select,
+	MenuItem,
+	Checkbox,
+	FormControlLabel
+} from "@mui/material";
+
+import { useFormUpdate } from "../model/useFormUpdate";
+import styles from "../styles/employeeDetails.module.scss";
+import { ControlChangeBtn } from "./ControlChangeBtn";
+import { SELECT_FIELDS } from "../config/selectFields";
+
+export const EducationDetails = ({ data, onSave }) => {
+	const { form, changeForm, changed, changedIndexs, resetFormIndex } = useFormUpdate(data);
+
+	if (!(form instanceof Array)) {
+		return null;
+	} else if (!form?.length) {
+		return <Typography variant="h2">Образование не добавлено</Typography>;
+	}
+
+	return (
+		<div className={styles.container}>
+			<Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+				{form.map((edu, index) => (
+					<Paper
+						key={index}
+						elevation={3}
+						sx={{
+							p: 3,
+							backgroundColor: "#fff3e0",
+						}}
+					>
+						<Typography variant="h6" gutterBottom>
+							Образование {index + 1}
+						</Typography>
+
+						<Grid container spacing={3}>
+							{/* Уровень образования */}
+							<Grid size={{ xs: 12, md: 4 }}>
+								<FormControl fullWidth>
+									<InputLabel>Уровень образования</InputLabel>
+									<Select
+										value={edu.level || ""}
+										label="Уровень образования"
+										onChange={(e) =>
+											changeForm("level", e.target.value, index)
+										}
+									>
+										{SELECT_FIELDS.EDUCATION_LEVELS.map((level) => (
+											<MenuItem key={level} value={level}>
+												{level}
+											</MenuItem>
+										))}
+									</Select>
+								</FormControl>
+							</Grid>
+
+							{/* Учебное заведение */}
+							<Grid size={{ xs: 12, md: 8 }}>
+								<TextField
+									label="Учебное заведение"
+									fullWidth
+									value={edu.institution || ""}
+									onChange={(e) =>
+										changeForm("institution", e.target.value, index)
+									}
+									slotProps={{
+										inputLabel: {
+											shrink: true
+										}
+									}}
+								/>
+							</Grid>
+
+							{/* Специальность */}
+							<Grid size={{ xs: 12 }}>
+								<TextField
+									label="Специальность"
+									fullWidth
+									value={edu.speciality || ""}
+									onChange={(e) =>
+										changeForm("speciality", e.target.value, index)
+									}
+									slotProps={{
+										inputLabel: {
+											shrink: true
+										}
+									}}
+								/>
+							</Grid>
+
+							{/* Дата начала */}
+							<Grid size={{ xs: 12, md: 4 }}>
+								<TextField
+									type="date"
+									label="Дата начала"
+									fullWidth
+									value={edu.startDate || ""}
+									onChange={(e) =>
+										changeForm("startDate", e.target.value, index)
+									}
+									slotProps={{
+										inputLabel: {
+											shrink: true
+										}
+									}}
+								/>
+							</Grid>
+
+							{/* Дата окончания */}
+							<Grid size={{ xs: 12, md: 4 }}>
+								<TextField
+									type="date"
+									label="Дата окончания"
+									fullWidth
+									value={edu.endDate || ""}
+									onChange={(e) =>
+										changeForm("endDate", e.target.value, index)
+									}
+									slotProps={{
+										inputLabel: {
+											shrink: true
+										}
+									}}
+								/>
+							</Grid>
+
+							{/* С отличием */}
+							<Grid size={{ xs: 12, md: 4 }}>
+								<FormControlLabel
+									control={
+										<Checkbox
+											checked={!!edu.honours}
+											onChange={(e) =>
+												changeForm("honours", e.target.checked, index)
+											}
+										/>
+									}
+									label="С отличием"
+								/>
+							</Grid>
+						</Grid>
+						{
+							changed && changedIndexs.includes(index) &&
+							<ControlChangeBtn onSave={() => onSave(index)} onReset={() => resetFormIndex(index)} />
+						}
+					</Paper>
+				))}
+			</Box>
+		</div>
+	);
+};
+
+Файл - EmploymentDetails.jsx
+Код:
+import {
+	Box,
+	Grid,
+	TextField,
+	Paper,
+	Typography,
+	FormControl,
+	InputLabel,
+	Select,
+	MenuItem,
+	Checkbox,
+	FormControlLabel
+} from "@mui/material";
+
+import { useFormUpdate } from "../model/useFormUpdate";
+import styles from "../styles/employeeDetails.module.scss";
+import { ControlChangeBtn } from "./ControlChangeBtn";
+import { SELECT_FIELDS } from "../config/selectFields";
+
+export const EmploymentDetails = ({ data, onSave }) => {
+	const { form, changeForm, changed, changedIndexs, resetFormIndex } = useFormUpdate(data);
+
+	if (!(form instanceof Array)) {
+		return null;
+	} else if (!form?.length) {
+		return <Typography variant="h2">Места работы не добавлены</Typography>;
+	}
+
+	return (
+		<div className={styles.container}>
+			<Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+				{form.map((emp, index) => (
+					<Paper
+						key={index}
+						elevation={3}
+						sx={{
+							p: 3,
+							backgroundColor: "#e8f5e9",
+						}}
+					>
+						<Typography variant="h6" gutterBottom>
+							Место работы {index + 1}
+						</Typography>
+
+						<Grid container spacing={3}>
+							{/* Организация */}
+							<Grid size={{ xs: 12, md: 6 }}>
+								<TextField
+									label="Организация"
+									fullWidth
+									value={emp.organization || ""}
+									onChange={(e) =>
+										changeForm("organization", e.target.value, index)
+									}
+									slotProps={{
+										inputLabel: {
+											shrink: true
+										}
+									}}
+								/>
+							</Grid>
+
+							{/* Должность */}
+							<Grid size={{ xs: 12, md: 6 }}>
+								<TextField
+									label="Должность"
+									fullWidth
+									value={emp.position || ""}
+									onChange={(e) =>
+										changeForm("position", e.target.value, index)
+									}
+									slotProps={{
+										inputLabel: {
+											shrink: true
+										}
+									}}
+								/>
+							</Grid>
+
+							{/* Тип занятости */}
+							<Grid size={{ xs: 12, md: 4 }}>
+								<FormControl fullWidth>
+									<InputLabel>Тип занятости</InputLabel>
+									<Select
+										value={emp.employmentType || ""}
+										label="Тип занятости"
+										onChange={(e) =>
+											changeForm("employmentType", e.target.value, index)
+										}
+									>
+										{SELECT_FIELDS.EMPLOYMENT_TYPES.map((type) => (
+											<MenuItem key={type} value={type}>
+												{type}
+											</MenuItem>
+										))}
+									</Select>
+								</FormControl>
+							</Grid>
+
+							{/* Дата приёма */}
+							<Grid size={{ xs: 12, md: 4 }}>
+								<TextField
+									type="date"
+									label="Дата приёма"
+									fullWidth
+									value={emp.hireDate || ""}
+									onChange={(e) =>
+										changeForm("hireDate", e.target.value, index)
+									}
+									slotProps={{
+										inputLabel: {
+											shrink: true
+										}
+									}}
+								/>
+							</Grid>
+
+							{/* Дата увольнения */}
+							<Grid size={{ xs: 12, md: 4 }}>
+								<TextField
+									type="date"
+									label="Дата увольнения"
+									fullWidth
+									value={emp.fireDate || ""}
+									onChange={(e) =>
+										changeForm("fireDate", e.target.value, index)
+									}
+									slotProps={{
+										inputLabel: {
+											shrink: true
+										}
+									}}
+									disabled={emp.current}
+								/>
+							</Grid>
+
+							{/* Опыт работы (лет) */}
+							<Grid size={{ xs: 12, md: 6 }}>
+								<TextField
+									type="number"
+									label="Опыт работы (лет)"
+									fullWidth
+									value={emp.experience || ""}
+									onChange={(e) =>
+										changeForm("experience", parseInt(e.target.value) || 0, index)
+									}
+									slotProps={{
+										inputLabel: {
+											shrink: true
+										}
+									}}
+								/>
+							</Grid>
+
+							{/* Текущее место работы */}
+							<Grid size={{ xs: 12, md: 6 }}>
+								<FormControlLabel
+									control={
+										<Checkbox
+											checked={!!emp.current}
+											onChange={(e) =>
+												changeForm("current", e.target.checked, index)
+											}
+										/>
+									}
+									label="Текущее место работы"
+								/>
+							</Grid>
+						</Grid>
+						{
+							changed && changedIndexs.includes(index) &&
+							<ControlChangeBtn onSave={() => onSave(index)} onReset={() => resetFormIndex(index)} />
+						}
+					</Paper>
+				))}
+			</Box>
+		</div>
+	);
+};
+
+Файл - FamilyMemberDetails.jsx
+Код:
+import {
+	Box,
+	Grid,
+	TextField,
+	Paper,
+	Typography,
+	FormControl,
+	InputLabel,
+	Select,
+	MenuItem
+} from "@mui/material";
+
+import { useFormUpdate } from "../model/useFormUpdate";
+import styles from "../styles/employeeDetails.module.scss";
+import { ControlChangeBtn } from "./ControlChangeBtn";
+import { SELECT_FIELDS } from "../config/selectFields";
+
+export const FamilyMemberDetails = ({ data, onSave }) => {
+	const { form, changeForm, changed, changedIndexs, resetFormIndex } = useFormUpdate(data);
+
+	if (!(form instanceof Array)) {
+		return null;
+	} else if (!form?.length) {
+		return (
+			<Typography variant="h2" className={styles.notFound}>
+				Члены семьи не добавлены
+			</Typography>
+		);
+	}
+
+	return (
+		<div className={styles.container}>
+			<Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+				{form.map((member, index) => (
+					<Paper
+						key={index}
+						elevation={3}
+						sx={{
+							p: 3,
+							backgroundColor: "#f3e5f5",
+						}}
+					>
+						<Typography variant="h6" gutterBottom>
+							Член семьи {index + 1}
+						</Typography>
+
+						<Grid container spacing={3}>
+							{/* Степень родства */}
+							<Grid size={{ xs: 12, md: 4 }}>
+								<FormControl fullWidth>
+									<InputLabel>Степень родства</InputLabel>
+									<Select
+										value={member.relation || ""}
+										label="Степень родства"
+										onChange={(e) =>
+											changeForm("relation", e.target.value, index)
+										}
+									>
+										{SELECT_FIELDS.RELATION_TYPES.map((relation) => (
+											<MenuItem key={relation} value={relation}>
+												{relation}
+											</MenuItem>
+										))}
+									</Select>
+								</FormControl>
+							</Grid>
+
+							{/* ФИО */}
+							<Grid size={{ xs: 12, md: 8 }}>
+								<TextField
+									label="ФИО"
+									fullWidth
+									value={member.fullName || ""}
+									onChange={(e) => changeForm("fullName", e.target.value, index)}
+									slotProps={{
+										inputLabel: {
+											shrink: true
+										}
+									}}
+								/>
+							</Grid>
+
+							{/* Дата рождения */}
+							<Grid size={{ xs: 12, md: 6 }}>
+								<TextField
+									type="date"
+									label="Дата рождения"
+									fullWidth
+									value={member.birthDate || ""}
+									onChange={(e) =>
+										changeForm("birthDate", e.target.value, index)
+									}
+									slotProps={{
+										inputLabel: {
+											shrink: true
+										}
+									}}
+								/>
+							</Grid>
+
+							{/* Телефон */}
+							<Grid size={{ xs: 12, md: 6 }}>
+								<TextField
+									label="Телефон"
+									fullWidth
+									value={member.phone || ""}
+									onChange={(e) => changeForm("phone", e.target.value, index)}
+									slotProps={{
+										inputLabel: {
+											shrink: true
+										}
+									}}
+								/>
+							</Grid>
+						</Grid>
+						{
+							changed && changedIndexs.includes(index) &&
+							<ControlChangeBtn onSave={() => onSave(index)} onReset={() => resetFormIndex(index)} />
+						}
+					</Paper>
+				))}
+			</Box>
+		</div>
+	);
+};
+
+Файл - PersonDetails.jsx
+Код:
+import {
+	Box,
+	Grid,
+	TextField,
+	Select,
+	MenuItem,
+	FormControl,
+	InputLabel,
+	Checkbox,
+	FormControlLabel,
+	Divider,
+} from "@mui/material";
+
+import { SELECT_FIELDS } from "../config/selectFields";
+import { useFormUpdate } from "../model/useFormUpdate";
+import styles from "../styles/employeeDetails.module.scss";
+import { ControlChangeBtn } from "./ControlChangeBtn";
+
+export const PersonDetails = ({ data, onSave }) => {
+	const { form, changed, changeForm, resetForm } = useFormUpdate(data);
+
+	if (!form) return null;
+
+
+	return (
+		<div className={styles.container}>
+			{/* Блок 1: ФИО */}
+			<h3 style={{ marginBottom: "16px" }}>ФИО</h3>
+			<Grid container spacing={3}>
+				<Grid size={{ xs: 12, md: 4 }}>
+					<TextField
+						label="Фамилия"
+						fullWidth
+						value={form.lastName || ""}
+						onChange={(e) => changeForm("lastName", e.target.value)}
+						slotProps={{
+							inputLabel: {
+								shrink: true
+							}
+						}}
+					/>
+				</Grid>
+				<Grid size={{ xs: 12, md: 4 }}>
+					<TextField
+						label="Имя"
+						fullWidth
+						value={form.firstName || ""}
+						onChange={(e) => changeForm("firstName", e.target.value)}
+						slotProps={{
+							inputLabel: {
+								shrink: true
+							}
+						}}
+					/>
+				</Grid>
+				<Grid size={{ xs: 12, md: 4 }}>
+					<TextField
+						label="Отчество"
+						fullWidth
+						value={form.middleName || ""}
+						onChange={(e) => changeForm("middleName", e.target.value)}
+						slotProps={{
+							inputLabel: {
+								shrink: true
+							}
+						}}
+					/>
+				</Grid>
+			</Grid>
+
+			<Divider sx={{ my: 3 }} />
+
+			{/* Блок 2: Личные данные */}
+			<h3 style={{ marginBottom: "16px" }}>Личные данные</h3>
+			<Grid container spacing={3}>
+				<Grid size={{ xs: 12, md: 3 }}>
+					<TextField
+						type="date"
+						label="Дата рождения"
+						fullWidth
+						value={form.birthDate || ""}
+						onChange={(e) => changeForm("birthDate", e.target.value)}
+						slotProps={{
+							inputLabel: {
+								shrink: true
+							}
+						}}
+					/>
+				</Grid>
+				<Grid size={{ xs: 12, md: 3 }}>
+					<FormControl fullWidth>
+						<InputLabel>Пол</InputLabel>
+						<Select
+							value={form.gender || ""}
+							label="Пол"
+							onChange={(e) => changeForm("gender", e.target.value)}
+							slotProps={{
+								inputLabel: {
+									shrink: true
+								}
+							}}
+						>
+							{SELECT_FIELDS.GENDER.map((gender) => (
+								<MenuItem key={gender.value} value={gender.value}>
+									{gender.label}
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
+				</Grid>
+				<Grid size={{ xs: 12, md: 3 }}>
+					<FormControl fullWidth>
+						<InputLabel>Семейное положение</InputLabel>
+						<Select
+							value={form.maritalStatus || ""}
+							label="Семейное положение"
+							onChange={(e) => changeForm("maritalStatus", e.target.value)}
+						>
+							{SELECT_FIELDS.MARITAL_STATUS.map((m) => (
+								<MenuItem key={m} value={m}>
+									{m}
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
+				</Grid>
+				<Grid size={{ xs: 12, md: 3 }}>
+					<TextField
+						label="Гражданство"
+						fullWidth
+						value={form.citizenship || ""}
+						onChange={(e) => changeForm("citizenship", e.target.value)}
+						slotProps={{
+							inputLabel: {
+								shrink: true
+							}
+						}}
+					/>
+				</Grid>
+			</Grid>
+
+			<Divider sx={{ my: 3 }} />
+
+			{/* Блок 3: Адресные данные */}
+			<h3 style={{ marginBottom: "16px" }}>Адресные данные</h3>
+			<Grid container spacing={3}>
+				<Grid size={{ xs: 12, md: 4 }}>
+					<FormControl fullWidth>
+						<InputLabel>Подразделение</InputLabel>
+						<Select
+							value={form.department || ""}
+							label="Подразделение"
+							onChange={(e) => changeForm("department", e.target.value)}
+						>
+							{SELECT_FIELDS.DEPARTMENT.map((department) => (
+								<MenuItem key={department} value={department}>
+									{department}
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
+				</Grid>
+				<Grid size={{ xs: 12, md: 4 }}>
+					<TextField
+						label="Email"
+						type="email"
+						fullWidth
+						value={form.email || ""}
+						onChange={(e) => changeForm("email", e.target.value)}
+						slotProps={{
+							inputLabel: {
+								shrink: true
+							}
+						}}
+					/>
+				</Grid>
+				<Grid size={{ xs: 12, md: 4 }}>
+					<TextField
+						label="Телефон"
+						fullWidth
+						value={form.phone || ""}
+						onChange={(e) => changeForm("phone", e.target.value)}
+						slotProps={{
+							inputLabel: {
+								shrink: true
+							}
+						}}
+					/>
+				</Grid>
+				<Grid size={{ xs: 12 }}>
+					<TextField
+						label="Адрес"
+						fullWidth
+						multiline
+						value={form.address || ""}
+						onChange={(e) => changeForm("address", e.target.value)}
+						slotProps={{
+							inputLabel: {
+								shrink: true
+							}
+						}}
+					/>
+				</Grid>
+			</Grid>
+
+			{/* Чекбокс */}
+			<Box sx={{ mt: 3 }}>
+				<FormControlLabel
+					control={
+						<Checkbox
+							checked={!!form.consent}
+							onChange={(e) => changeForm("consent", e.target.checked)}
+						/>
+					}
+					label="Согласие на обработку данных"
+				/>
+			</Box>
+
+			{
+				changed &&
+				<ControlChangeBtn onSave={() => onSave(index)} onReset={resetForm} />
+			}
+		</div>
+	);
+};
+
+
+Файл - TicketDetails.jsx
+Код:
+import {
+	Box,
+	Grid,
+	TextField,
+	Paper,
+	Typography,
+	FormControl,
+	InputLabel,
+	Select,
+	MenuItem
+} from "@mui/material";
+
+import { useFormUpdate } from "../model/useFormUpdate";
+import styles from "../styles/employeeDetails.module.scss";
+import { ControlChangeBtn } from "./ControlChangeBtn";
+import { SELECT_FIELDS } from "../config/selectFields";
+
+export const TicketDetails = ({ data, onSave }) => {
+	const { form, changeForm, changed, changedIndexs, resetFormIndex } = useFormUpdate(data);
+
+	if (!(form instanceof Array)) {
+		return null;
+	} else if (!form?.length) {
+		return <Typography variant="h2">Заявки не добавлены</Typography>;
+	}
+
+	return (
+		<div className={styles.container}>
+			<Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+				{form.map((ticket, index) => (
+					<Paper
+						key={index}
+						elevation={3}
+						sx={{
+							p: 3,
+							backgroundColor: "#fce4ec",
+						}}
+					>
+						<Typography variant="h6" gutterBottom>
+							Заявка {index + 1}
+						</Typography>
+
+						<Grid container spacing={3}>
+							{/* Название */}
+							<Grid size={{ xs: 12 }}>
+								<TextField
+									label="Название"
+									fullWidth
+									value={ticket.title || ""}
+									onChange={(e) =>
+										changeForm("title", e.target.value, index)
+									}
+									slotProps={{
+										inputLabel: {
+											shrink: true
+										}
+									}}
+								/>
+							</Grid>
+
+							{/* Категория */}
+							<Grid size={{ xs: 12, md: 4 }}>
+								<FormControl fullWidth>
+									<InputLabel>Категория</InputLabel>
+									<Select
+										value={ticket.category || ""}
+										label="Категория"
+										onChange={(e) =>
+											changeForm("category", e.target.value, index)
+										}
+									>
+										{Object.entries(SELECT_FIELDS.TICKET_CATEGORY).map(([cat, label]) => (
+											<MenuItem key={cat} value={cat}>
+												{label}
+											</MenuItem>
+										))}
+									</Select>
+								</FormControl>
+							</Grid>
+
+							{/* Приоритет */}
+							<Grid size={{ xs: 12, md: 4 }}>
+								<FormControl fullWidth>
+									<InputLabel>Приоритет</InputLabel>
+									<Select
+										value={ticket.priority || ""}
+										label="Приоритет"
+										onChange={(e) =>
+											changeForm("priority", e.target.value, index)
+										}
+									>
+										{SELECT_FIELDS.TICKET_PRIORITIES.map((priority) => (
+											<MenuItem key={priority} value={priority}>
+												{priority}
+											</MenuItem>
+										))}
+									</Select>
+								</FormControl>
+							</Grid>
+
+							{/* Статус */}
+							<Grid size={{ xs: 12, md: 4 }}>
+								<FormControl fullWidth>
+									<InputLabel>Статус</InputLabel>
+									<Select
+										value={ticket.status || ""}
+										label="Статус"
+										onChange={(e) =>
+											changeForm("status", e.target.value, index)
+										}
+									>
+										{Object.entries(SELECT_FIELDS.TICKET_STATUS).map(([status, label]) => (
+											<MenuItem key={status} value={status}>
+												{label}
+											</MenuItem>
+										))}
+									</Select>
+								</FormControl>
+							</Grid>
+
+							{/* Дата создания */}
+							<Grid size={{ xs: 12, md: 6 }}>
+								<TextField
+									type="date"
+									label="Дата создания"
+									fullWidth
+									value={ticket.createdAt || ""}
+									onChange={(e) =>
+										changeForm("createdAt", e.target.value, index)
+									}
+									slotProps={{
+										inputLabel: {
+											shrink: true
+										}
+									}}
+								/>
+							</Grid>
+
+							{/* Дата обновления */}
+							<Grid size={{ xs: 12, md: 6 }}>
+								<TextField
+									type="date"
+									label="Дата обновления"
+									fullWidth
+									value={ticket.updatedAt || ""}
+									onChange={(e) =>
+										changeForm("updatedAt", e.target.value, index)
+									}
+									slotProps={{
+										inputLabel: {
+											shrink: true
+										}
+									}}
+								/>
+							</Grid>
+
+							{/* Описание */}
+							<Grid size={{ xs: 12 }}>
+								<TextField
+									label="Описание"
+									fullWidth
+									multiline
+									rows={3}
+									value={ticket.description || ""}
+									onChange={(e) =>
+										changeForm("description", e.target.value, index)
+									}
+									slotProps={{
+										inputLabel: {
+											shrink: true
+										}
+									}}
+								/>
+							</Grid>
+						</Grid>
+						{
+							changed && changedIndexs.includes(index) &&
+							<ControlChangeBtn onSave={() => onSave(index)} onReset={() => resetFormIndex(index)} />
+						}
+					</Paper>
+				))}
+			</Box>
+		</div>
+	);
+};
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employees-filtering
+
+Файл - index.js
+Код:
+export { usePageFilter } from "./model/usePageFilter";
+export {PageFilterButton} from './ui/PageFilterButton';
+export { FILTER_FIELDS } from "./config/filterFields";
+export { useServerFilter } from "./model/useServerFilter";
+export { ServerFiltersBar } from "./ui/ServerFilterBar";
+
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employees-filtering\config
+
+Файл - filterFields.js
+Код:
+
+export const FILTER_FIELDS = {
+	GENDER: {
+		key: "gender",
+		values: [
+			["Мужской", "male"],
+			["Женский", "female"],
+			["Все", ""]
+		]
+	},
+	DEPARTMENT: {
+		key: "department",
+		values: [
+			["IT", "IT"],
+			["Finance", "Finance"],
+			["HR", "HR"],
+			["Support", "Support"],
+			["Все", ""]
+		]
+	},
+	HAS_TICKETS:{
+		key: "hasTickets",
+		values: [
+			["Есть заявки", "true"],
+			["Нет заявок", "false"],
+			["Все", ""]
+		]
+	}
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employees-filtering\model
+
+Файл - usePageFilter.js
+Код:
+import { useCallback, useMemo, useState } from "react"
+
+export const usePageFilter = (employees) => {
+	const [filters, setFilters] = useState({
+		gender: null,
+		department: null,
+		hasTickets: null
+	});
+
+	const updateFilters = useCallback((key, value) => {
+		setFilters(prev => ({
+			...prev,
+			[key]: value === '' ? null : value
+		}));
+	}, []);
+
+	const resetFilters = useCallback(() => {
+		setFilters({
+			gender: null,
+			department: null,
+			hasTickets: null
+		})
+	}, [])
+
+	const filteredEmployees = useMemo(() => {
+		return employees.filter(emp => {
+			return Object.entries(filters).every(
+				([key, value]) => value === null || emp[key] === value)
+		});
+	}, [filters, employees]);
+
+	const hasActiveFilters = Object.entries(filters)
+		.some(([key, value]) => value !== null);
+
+
+	return useMemo(() => ({
+		filters,
+		updateFilters,
+		resetFilters,
+		filteredEmployees,
+		hasActiveFilters
+	}), [filters, employees])
+}
+
+Файл - useServerFilter.js
+Код:
+import { useCallback, useMemo, useState } from "react"
+
+export const useServerFilter = (resetPagination) => {
+	const [filters, setFilters] = useState({
+		gender: null,
+		department: null,
+		hasTickets: null
+	});
+
+	const updateFilters = useCallback((key, value) => {
+		setFilters(prev => ({
+			...prev,
+			[key]: value === '' ? null : value
+			
+		}));
+		resetPagination();
+	}, []);
+
+	const resetFilters = useCallback(() => {
+		setFilters({
+			gender: null,
+			department: null,
+			hasTickets: null
+		})
+	}, [])
+
+	const hasActiveFilters = Object.values(filters).some(value => value !== null);
+
+	const filtersForApi = (filters) => {
+		const filtredEntries = Object.entries(filters).filter(([key, value]) => value !== null)
+		return Object.fromEntries(filtredEntries);
+	}
+
+	return useMemo(() => ({
+		filters,
+		updateFilters,
+		resetFilters,
+		hasActiveFilters,
+		apiParams: filtersForApi(filters)
+	}), [filters, hasActiveFilters]);
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employees-filtering\style
+
+Файл - filtering.module.scss
+Код:
+.filtersBar {
+	display: flex;
+	gap: 16px;
+	padding: 0; // Убираем padding, так как он в content
+	flex-wrap: wrap;
+	align-items: center;
+
+	.filter {
+		min-width: 160px;
+		flex: 1;
+		max-width: 200px;
+
+		// Переопределяем стили Material UI
+		:global(.MuiInputLabel-root) {
+			color: #424242;
+			font-size: 14px;
+			font-weight: 500;
+
+			&:global(.Mui-focused) {
+				color: #1976d2;
+			}
+		}
+
+		:global(.MuiOutlinedInput-root) {
+			border-radius: 8px;
+			transition: all 0.2s ease;
+
+			:global(.MuiOutlinedInput-notchedOutline) {
+				border-color: #e0e0e0;
+				border-width: 2px;
+			}
+
+			&:hover :global(.MuiOutlinedInput-notchedOutline) {
+				border-color: #1976d2;
+			}
+
+			&:global(.Mui-focused) :global(.MuiOutlinedInput-notchedOutline) {
+				border-color: #1976d2;
+				box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+			}
+		}
+
+		@media (max-width: 768px) {
+			min-width: 140px;
+			max-width: 160px;
+		}
+
+		@media (max-width: 480px) {
+			min-width: 100%;
+			max-width: 100%;
+		}
+	}
+
+	@media (max-width: 480px) {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 12px;
+	}
+}
+
+.filterToolbar {
+	margin-bottom: 0;
+	border-radius: 12px;
+	padding: 5px 15px;
+	min-height: 142px;
+}
+
+.pageFilter {
+	position: relative;
+
+	.pageFilterContainer {
+		position: absolute;
+		top: -100%;
+		transform: translateY(-100%);
+		border-radius: 5px;
+		background: #f1f1f1;
+		box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2);
+		padding: 10px 10px 0 10px;
+		min-width: 100%;
+
+		&::before {
+			content: '';
+			display: inline-block;
+			position: absolute;
+			bottom: 0;
+			transform: translateY(100%);
+			left: 3px;
+			width: 0;
+			height: 0;
+			border-left: 8px solid transparent;
+			border-right: 8px solid transparent;
+			border-top: 9px solid rgba(0, 0, 0, 0.5);
+		}
+	}
+	.list {
+		padding: 0;
+	}
+	.listText span {
+		font-size: 11px;
+		font-family: "Inter";
+		color: #495057;
+		font-weight: 700;
+
+		&:hover {
+			color: #1976d2;
+		}
+	}
+
+	.listButton {
+		padding: 3px 0;
+	}
+
+	.listItem {
+		padding: 0;
+	}
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employees-filtering\ui
+
+Файл - PageFilterButton.jsx
+Код:
+import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import styles from '../style/filtering.module.scss';
+import { useState } from 'react';
+
+export const PageFilterButton = ({ children, onFilterChange, fieldFilters }) => {
+	const [isActive, setIsActive] = useState(false);
+
+	return (
+		<div
+			onClick={() => setIsActive(prev => !prev)}
+			className={styles.pageFilter}
+		>
+				{children}
+			{isActive ?
+				<FiltersList
+					onFilterChange={onFilterChange}
+					filters={fieldFilters}
+					setIsActive={setIsActive} /> :
+				null}
+		</div>
+	)
+}
+/* filters:
+	{
+		key: "gender"
+		values: [["Мужской", "male"], ["Женский", "female"]]
+	}
+*/
+const FiltersList = ({ filters, onFilterChange }) => {
+
+	return (
+		<div className={styles.pageFilterContainer}>
+			<List className={styles.listItem}>
+				{filters.values.map(values => {
+					return (
+						<ListItem
+							className={styles.listItem}>
+							<ListItemButton
+								onClick={() => onFilterChange(filters.key, values[1])}
+								className={styles.listButton}
+
+							>
+								<ListItemText primary={values[0]} className={styles.listText} />
+							</ListItemButton>
+						</ListItem>
+					)
+				})}
+			</List>
+		</div>
+	)
+}
+
+Файл - ServerFilterBar.jsx
+Код:
+import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import styles from '../style/filtering.module.scss';
+import { Toolbar, OpenBarButton } from '../../../shared/ui';
+import { 
+	useState } from 'react';
+import FilterListAltIcon from '@mui/icons-material/FilterListAlt';
+
+
+
+export const ServerFiltersBar = ({ filters, onFilterChange, onReset, hasActiveFilters }) => {
+	const [isActive, setIsActive] = useState(false);
+
+	return isActive ? <View
+		onFilterChange={onFilterChange}
+		filters={filters}
+		onClose={() => setIsActive(false)}
+		onReset={onReset}
+		isActive={hasActiveFilters}
+	/> :
+		<OpenBarButton onShow={setIsActive} isActive={hasActiveFilters} Icon={FilterListAltIcon} />
+};
+
+const View = ({ onFilterChange, filters, onClose, isActive, onReset }) => {
+	const customSX = {
+		'&.Mui-focused': {
+			transform: 'translate(14px, -20px) scale(0.8)', // Фиксируем позицию при фокусе
+			color: 'primary.main'
+		},
+		'&.MuiInputLabel-shrink': {
+			transform: 'translate(14px, -20px) scale(0.8)' // Фиксируем при наличии значения
+		}
+	}
+	return (
+		<Toolbar
+			onClose={onClose}
+			isActive={isActive}
+			onReset={onReset}
+			className={styles.filterToolbar}
+			caption={"Фильтр"}
+		>
+			<div className={styles.filtersBar}>
+				<FormControl size="small" className={styles.filter}>
+					<InputLabel sx={customSX}>Пол</InputLabel>
+					<Select
+						value={filters.gender || ''}
+						onChange={(e) => onFilterChange('gender', e.target.value)}
+					>
+						<MenuItem value="">Все</MenuItem>
+						<MenuItem value="male">Мужской</MenuItem>
+						<MenuItem value="female">Женский</MenuItem>
+					</Select>
+				</FormControl>
+
+				<FormControl size="small" className={styles.filter}>
+					<InputLabel sx={customSX}>Подразделение</InputLabel>
+					<Select
+						value={filters.department || ''}
+						onChange={(e) => onFilterChange('department', e.target.value)}
+					>
+						<MenuItem value="">Все подразделения</MenuItem>
+						<MenuItem value="IT">IT</MenuItem>
+						<MenuItem value="HR">HR</MenuItem>
+						<MenuItem value="Finance">Finance</MenuItem>
+						<MenuItem value="Support">Support</MenuItem>
+					</Select>
+				</FormControl>
+
+				<FormControl size="small" className={styles.filter}>
+					<InputLabel sx={customSX}>
+						Заявки
+					</InputLabel>
+					<Select
+						value={filters.hasTickets?.toString() || ''}
+						onChange={(e) => {
+							const value = e.target.value === "" ? "" : e.target.value === 'true';
+							onFilterChange('hasTickets', value);
+						}}>
+						<MenuItem value="">Все</MenuItem>
+						<MenuItem value="true">Есть заявки</MenuItem>
+						<MenuItem value="false">Нет заявок</MenuItem>
+					</Select>
+				</FormControl>
+			</div>
+		</Toolbar >
+	)
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employees-pagination
+
+Файл - index.js
+Код:
+export {usePagination} from './model/usePagination';
+export {PaginationControls} from './ui/PaginationControls';
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employees-pagination\model
+
+Файл - usePagination.js
+Код:
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { employeeApi } from "../../../entities/employee";
+
+export const usePagination = (initialItemsPerPage = 20) => {
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemPerPage, setItemPerPage] = useState(initialItemsPerPage);
+    const [totalItems, setTotalItems] = useState(0);
+
+    useEffect(() => {
+        employeeApi.getEmployeesForTable()
+            .then(({ totalItems }) => setTotalItems(totalItems));
+    }, []);
+
+    const setPage = useCallback((page) => {
+        setCurrentPage(page);
+    }, []);
+    
+    const apiParams = useMemo(() => ({
+        _page: currentPage,
+        _limit: itemPerPage
+    }), [currentPage, itemPerPage]);
+
+    const changePage = useCallback((num) => {
+        const endPage = Math.ceil(totalItems / itemPerPage);
+        const followingPage = currentPage + num;
+        if (followingPage < 1) {
+            setPage(1);
+        } else if (followingPage > endPage) {
+            setPage(endPage);
+        } else {
+            setPage(followingPage);
+        };
+    }, [currentPage, totalItems, itemPerPage, setPage]);
+
+    const resetPagination = useCallback(() => {
+        setCurrentPage(1);
+    }, []);
+
+    return useMemo(() => ({
+        currentPage,
+        setPage,
+        changePage,
+        resetPagination,
+        itemPerPage,
+				setItemPerPage,
+        apiParams
+    }), [currentPage, setPage, changePage, resetPagination, itemPerPage]);
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employees-pagination\styles
+
+Файл - pagination.module.scss
+Код:
+.pagination {
+  &Controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 16px 24px;
+    background-color: #fafafa;
+    border-top: 1px solid #e0e0e0;
+    border-radius: 0 0 8px 8px;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 12px;
+      padding: 12px 16px;
+    }
+  }
+  
+  &Nav {
+    display: flex;
+    align-items: center;
+    gap: 4px; 
+    
+    button {
+      min-width: 32px;
+      height: 32px;
+      background: none; 
+      border: none; 
+      color: #1976d2; 
+      font-size: 16px; 
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      &:hover:not(:disabled) {
+        background-color: rgba(25, 118, 210, 0.1);
+        color: #1565c0;
+        transform: scale(1.1);
+      }
+      
+      &:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      button {
+        min-width: 28px;
+        height: 28px;
+        font-size: 14px;
+      }
+    }
+  }
+  
+  &Info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    
+    @media (max-width: 480px) {
+      font-size: 12px;
+    }
+  }
+  
+  &CurrentItems {
+    font-weight: 700;
+    color: #1976d2;
+    font-size: 15px;
+  }
+  
+  &DeciderItems {
+    color: #666;
+    font-size: 18px;
+    font-weight: 300;
+    margin: 0 4px;
+  }
+  
+  &TotalItems {
+    color: #424242;
+    font-weight: 500;
+    font-size: 15px;
+  }
+  
+  &Label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #424242;
+    font-weight: 500;
+    
+    select {
+      padding: 6px 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      background-color: #ffffff;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: #424242;
+      transition: all 0.2s ease;
+      
+      &:focus {
+        outline: none;
+        border-color: #1976d2;
+        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+      }
+      
+      &:hover {
+        border-color: #1976d2;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      font-size: 12px;
+      
+      select {
+        font-size: 12px;
+        padding: 4px 8px;
+      }
+    }
+  }
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employees-pagination\ui
+
+Файл - PaginationControls.jsx
+Код:
+import styles from '../styles/pagination.module.scss';
+import { memo } from 'react';
+
+export const PaginationControls = memo(({
+	currentItems,
+	currentPage,
+	totalItems,
+	itemPerPage,
+	onChangePage,
+	onSetPage,
+	onSetItemsPerPage
+}) => {
+	const endPage = Math.ceil(totalItems / itemPerPage);
+	const [startItem, endItem] = currentItems;
+
+	return (
+		<div className={styles.paginationControls}>
+			<div className={styles.paginationNav}>
+				<button onClick={() => onSetPage(1)} disabled={currentPage === 1}>
+					{"<<"}
+				</button>
+				<button onClick={() => onChangePage(-1)} disabled={currentPage === 1}>
+					{"<"}
+				</button>
+			</div>
+
+			<div className={styles.paginationInfo}>
+				<span className={styles.paginationCurrentItems}>{startItem}-{endItem}</span>
+				<span className={styles.paginationDeciderItems}>/</span>
+				<span className={styles.paginationTotalItems}>{totalItems}</span>
+			</div>
+
+			<div className={styles.paginationNav}>
+				<button onClick={() => onChangePage(1)} disabled={currentPage === endPage}>
+					{">"}
+				</button>
+				<button onClick={() => onSetPage(endPage)} disabled={currentPage === endPage}>
+					{">>"}
+				</button>
+			</div>
+
+			<label className={styles.paginationLabel}>
+				Выберите кол-во строк
+				<select
+					onChange={(e) => onSetItemsPerPage(e.target.value)}
+					value={itemPerPage}
+					className={styles.paginationSelect}
+				>
+					<option value={10}>10</option>
+					<option value={15}>15</option>
+					<option value={20}>20</option>
+					<option value={30}>30</option>
+				</select>
+			</label>
+		</div>
+	)
+});
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employees-sorting
+
+Файл - index.js
+Код:
+export { useServerSort } from "./model/useServerSort";
+export { usePageSort } from "./model/usePageSort";
+export { ServerSortBar } from "./ui/ServerSortBar";
+export { PageSortButton } from "./ui/PageSortButton";
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employees-sorting\config
+
+Файл - sortingFields.js
+Код:
+
+
+export const SORTING_FIELDS = {
+	FULL_NAME: "lastName,firstName,middleName",
+	BIRTH_DATE: "birthDate",
+	TICKETS_COUNT: "ticketsCount"
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employees-sorting\model
+
+Файл - usePageSort.js
+Код:
+import { useState, useCallback, useMemo } from 'react';
+
+export const usePageSort = (employees) => {
+	const [sort, setSort] = useState({
+		field: null,
+		direction: null //asc и desc
+	});
+
+	const updateSort = useCallback((field) => {
+		setSort(prev => {
+			if (prev.field === field) {
+				switch (prev.direction) {
+					case 'asc':
+						return { field, direction: 'desc' };
+					case 'desc':
+						return { field: null, direction: null };
+					default:
+						return { field, direction: 'asc' }
+				}
+			} else {
+				return { field, direction: 'asc' }
+			}
+		});
+	}, []);
+
+	const resetSort = useCallback(() => {
+		setSort({ field: null, direction: null });
+	}, []);
+
+	const sortedEmployees = useMemo(() => {
+		if (!sort.field) return employees;
+		const sorted = [...employees].sort((a, b) => {
+			if (a[sort.field] < b[sort.field]) return sort.direction === 'asc' ? -1 : 1;
+			if (a[sort.field] > b[sort.field]) return sort.direction === 'asc' ? 1 : -1;
+			return 0;
+		});
+		return sorted;
+	}, [employees, sort]);
+
+	return useMemo(() => ({
+		sort,
+		updateSort,
+		sortedEmployees,
+		resetSort
+	}), [sort, employees]);
+}
+
+Файл - useServerSort.js
+Код:
+import { useCallback, useMemo, useState } from "react";
+
+export const useServerSort = () => {
+	const [sort, setSort] = useState({
+		field: null,
+		direction: null //asc и desc
+	});
+
+	const updateSort = useCallback((field) => {
+		setSort(prev => {
+			if (prev.field === field){
+				switch(prev.direction){
+					case 'asc':
+						return {field, direction: 'desc'};
+					case 'desc':
+						return {field: null, direction: null};
+					default:
+						return {field, direction: 'asc'}
+				}
+			} else {
+				return {field, direction: 'asc'}
+			}
+		});
+	}, [])
+
+	const resetSort = useCallback(() => {
+		setSort({field: null, direction: null});
+	}, [])
+
+	const hasActiveSort = sort.direction !== null;
+	const apiParams = sort.field ? {
+		_sort: sort.field,
+		_order: sort.direction
+	} : {};
+
+	return useMemo(() => ({
+		sort,
+		updateSort,
+		resetSort,
+		hasActiveSort,
+		apiParams
+	}), [sort]);
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employees-sorting\style
+
+Файл - sorting.module.scss
+Код:
+.sortingToolbar {
+  margin-bottom: 0; 
+  border-radius: 12px;
+	padding: 5px 15px;
+	min-height: 149px;
+	min-width: 452px;
+
+  .sortingButtons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+
+		&>button{
+			
+		}
+    
+    :global(.MuiButton-root) {
+      border-radius: 8px;
+      text-transform: none;
+      font-weight: 500;
+      padding: 10px 16px;
+      border: 2px solid #e0e0e0;
+      color: #424242;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background-color: #f5f5f5;
+        border-color: #1976d2;
+        transform: translateY(-1px);
+      }
+      
+      &.active {
+        background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+        color: #ffffff;
+        border-color: #1976d2;
+        box-shadow: 0 4px 8px rgba(25, 118, 210, 0.3);
+        
+        &:hover {
+          background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+          transform: translateY(-1px);
+        }
+      }
+      
+      .sortIcon {
+        margin-left: 6px;
+        font-size: 18px;
+        transition: transform 0.2s ease;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      gap: 8px;
+      
+      :global(.MuiButton-root) {
+        padding: 8px 12px;
+        font-size: 13px;
+        
+        .sortIcon {
+          font-size: 16px;
+          margin-left: 4px;
+        }
+      }
+    }
+    
+    @media (max-width: 480px) {
+      flex-direction: column;
+      gap: 6px;
+      
+      :global(.MuiButton-root) {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+  }
+}
+
+.pageSort{
+	display: flex;
+	position: relative;
+
+	&>svg{
+		height: 18px;
+		margin-left: 6px;
+		@media (max-width: 768px) {
+			height: 15px;
+			margin-left: 4px;
+		}
+	}
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\features\employees-sorting\ui
+
+Файл - PageSortButton.jsx
+Код:
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import styles from '../style/sorting.module.scss';
+
+export const PageSortButton = ({ children, direction, onUpdateSort, field }) => {
+	const iconMap = {
+		'asc': <ArrowUpwardIcon />,
+		'desc': <ArrowDownwardIcon />
+	}
+	return (
+		<div
+			onClick={() => onUpdateSort(field)}
+			className={styles.pageSort}
+		>
+			{children}
+			{iconMap[direction]}
+		</div>
+	)
+}
+
+
+Файл - ServerSortBar.jsx
+Код:
+import { Button } from "@mui/material";
+import SortIcon from '@mui/icons-material/Sort';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import styles from "../style/sorting.module.scss";
+import { useState } from "react";
+import { memo } from "react";
+import { SORTING_FIELDS } from "../config/sortingFields";
+import { Toolbar, OpenBarButton } from "../../../shared/ui";
+
+export const ServerSortBar = memo(({ sort, onUpdateSort, onResetSort, hasActiveSort, }) => {
+	const [isActive, setIsActive] = useState(false);
+
+	const activeSort = (field) => {
+		if (sort.field === field) {
+			return sort.direction === 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />;
+		} else {
+			return null;
+		}
+	}
+
+	return isActive ?
+		<View
+			onUpdateSort={onUpdateSort}
+			activeSort={activeSort}
+			onClose={() => setIsActive(false)}
+			onReset={onResetSort}
+			isActive={hasActiveSort}
+			sort={sort}
+		/> :
+		<OpenBarButton onShow={setIsActive} Icon={SortIcon} isActive={hasActiveSort} />
+
+});
+
+const View = ({ onClose, activeSort, onUpdateSort, onReset, isActive, sort }) => {
+	return (
+		<Toolbar
+			onClose={onClose}
+			isActive={isActive}
+			onReset={onReset}
+			className={styles.sortingToolbar}
+			caption={"Сортировка"}
+		>
+			<div className={styles.sortingButtons}>
+				<Button
+					onClick={() => onUpdateSort(SORTING_FIELDS.FULL_NAME)}
+					className={sort.field === SORTING_FIELDS.FULL_NAME ? styles.active : ''}
+				>
+					ФИО
+					{activeSort(SORTING_FIELDS.FULL_NAME)}
+				</Button>
+				<Button
+					onClick={() => onUpdateSort(SORTING_FIELDS.BIRTH_DATE)}
+					className={sort.field === SORTING_FIELDS.BIRTH_DATE ? `${styles.active}` : ""}
+				>
+					Дата рождения
+					{activeSort(SORTING_FIELDS.BIRTH_DATE)}
+				</Button>
+				<Button
+					onClick={() => onUpdateSort(SORTING_FIELDS.TICKETS_COUNT)}
+					className={sort.field === SORTING_FIELDS.TICKETS_COUNT ? styles.active : ''}
+				>
+					По количеству заявок
+					{activeSort(SORTING_FIELDS.TICKETS_COUNT)}
+				</Button>
+			</div>
+		</Toolbar>
+	);
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\features\sidebar-toggle
+
+Файл - index.js
+Код:
+export {ToggleBarButton} from './ui/ToggleBarButton';
+export {useSidebarToggle} from './hooks/useSidebarToggle';
+
+Директория - D:\Programming\frontend\corp-portal\src\features\sidebar-toggle\hooks
+
+Файл - useSidebarToggle.js
+Код:
+import { useState } from "react"
+
+const useSidebarToggle = () => {
+
+	const [isCollapsed, setCollapse] = useState(false);
+
+	const toggle = () => setCollapse(prev => !prev);
+	const collapse  = () => setCollapse(true);
+	const expand = () => setCollapse(false);
+
+	return {
+		isCollapsed,
+		toggle,
+		collapse,
+		expand
+	}
+}
+
+export {useSidebarToggle};
+
+Директория - D:\Programming\frontend\corp-portal\src\features\sidebar-toggle\ui
+
+Файл - ToggleBarButton.jsx
+Код:
+import { IconButton } from "@mui/material";
+import { SidebarIcons } from '../../../shared/ui';
+
+const ToggleBarButton = ({ onToggle, iconProps, ...props }) => {
+
+	return (
+		<IconButton onClick={onToggle} {...props}>
+			<SidebarIcons {...iconProps} />
+		</IconButton>
+	)
+}
+
+export { ToggleBarButton };
+
+
+Директория - D:\Programming\frontend\corp-portal\src\pages
+
+Файл - Dashboards.jsx
+Код:
+
+export const Dashboards = () => {
+
+	return(
+		<div> 
+			Это будет главной страницей!
+		</div>
+	)
+}
+
+Файл - EmployeeProfile.jsx
+Код:
+import { Employee } from "../widgets/employee";
+
+export const EmployeeProfile = () => {
+
+	return <Employee />
+}
+
+Файл - Employees.jsx
+Код:
+import { EmployeeTable } from "../widgets/employees-table";
+import { Outlet } from "react-router"
+export const Employees = () => {
+
+	return (
+		<>
+			<EmployeeTable />
+			<Outlet />
+		</>
+	)
+}
+
+Файл - index.js
+Код:
+export {Dashboards} from './Dashboards';
+export {Employees} from './Employees';
+export {Root} from './Root';
+export { EmployeeProfile } from './EmployeeProfile';
+
+Файл - Root.jsx
+Код:
+import { Outlet } from "react-router";
+import { Sidebar } from "../widgets/sidebar";
+import { AppContainer } from "../shared/ui";
+
+
+export const Root = () => {
+	return (
+		<AppContainer>
+			<Sidebar />
+			<Outlet />
+		</AppContainer>
+	)
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\shared
+
+Директория - D:\Programming\frontend\corp-portal\src\shared\api
+
+Файл - apiConfig.js
+Код:
+export const API_CONFIG = {
+	BASE_URL: 'http://localhost:3001',
+	ENDPOINTS: {
+		PERSONS: '/persons',
+		DOCUMENTS: '/documents',
+		FAMILY_MEMBERS: '/familyMembers',
+		EDUCATIONS: '/educations',
+		EMPLOYMENTS: '/employments',
+		TICKETS: '/tickets'
+	}
+};
+
+Файл - baseApi.js
+Код:
+import { Http } from "./http";
+
+export class BaseApi extends Http {
+	constructor(baseUrl, endpoint) {
+		super(baseUrl);
+		this.endpoint = endpoint;
+	}
+
+	async getList(params = {}, options) {
+		const { data, headers } = await this.get(this.endpoint, params, options, true); //true для получения headers
+		const totalItems = parseInt(headers.get('X-Total-Count')) || data.length; //если за раз возвращаются все данные, то заголовка не будет => берем длину массива
+		const currentItems = [
+			Math.min((params._page - 1) * params._limit + 1, totalItems), //если данных вообще нет, то totalItems=0
+			Math.min(params._page * params._limit, totalItems)
+		];
+		return {
+			data,
+			totalItems,
+			currentItems
+		};
+	}
+
+	async getByParams(params = {}, options) {
+		return await this.get(this.endpoint, params, options);
+	}
+
+	async getById(id, options) {
+		return await this.get(`${this.endpoint}/${id}`, {}, options);
+	}
+
+	async create(data, options = {}) {
+		return await this.post(this.endpoint, data, options);
+	}
+
+	async update(id, data, options){
+		return await this.put(`${this.endpoint}/${id}`, data, options);
+	}
+
+	async patch(id, data, options){
+		return await this.patch(`${this.endpoint}/${id}`, data, options);
+	}
+
+	async delete(id, options){
+		return await this.delete(`${this.endpoint}/${id}`, options);
+	}
+}
+
+
+
+
+Файл - http.js
+Код:
+
+class Http {
+	constructor(baseUrl) {
+		this.baseUrl = baseUrl;
+		this.defaultHeaders = {
+			'Content-Type': 'application/json',
+		};
+	}
+
+	async request(endpoint, options = {}, withHeaders = false) {
+
+		const url = `${this.baseUrl}${endpoint}`;
+
+		const config = {
+			...options,
+			headers: { ...this.defaultHeaders, ...options.headers }
+		};
+
+		try {
+			const response = await fetch(url, config);
+
+			if (!response.ok) {
+				throw new HttpError(
+					`HTTP ${response.status}: ${response.statusText}`,
+					response.status,
+					url
+				);
+			}
+
+			const data = await this.parseResponse(response);
+			if (withHeaders) {
+				return {
+					data,
+					headers: response.headers
+				};
+			}
+			return data;
+
+		} catch (error) {
+			let httpError = error;
+
+			if (!(error instanceof HttpError)) {
+				httpError = new HttpError(error.message, 0, url);
+			}
+
+			httpError.consoleErr();
+			throw httpError;
+		}
+
+	}
+
+	async parseResponse(response) {
+		const contentType = response.headers.get('content-type');
+
+		if (contentType && contentType.includes('application/json')) {
+			return await response.json();
+		} else {
+			return await response.text();
+		}
+	}
+
+	async get(endpoint, params = {}, options, withHeaders) {
+		const queryString = this.buildQueryString(params);
+		const url = queryString ? `${endpoint}?${queryString}` : endpoint;
+
+		return this.request(url, { ...options, method: 'GET' }, withHeaders);
+	}
+
+	async post(endpoint, body = {}, options, withHeaders) {
+		return this.request(
+			endpoint,
+			{
+				...options,
+				method: 'POST',
+				body: JSON.stringify(body)
+			},
+			withHeaders
+		);
+	}
+
+	async put(endpoint, body = {}, options, withHeaders) {
+		return this.request(
+			endpoint,
+			{
+				...options,
+				method: 'PUT',
+				body: JSON.stringify(body)
+			},
+			withHeaders
+		);
+	}
+
+	async patch(endpoint, body = {}, options, withHeaders) {
+		return this.request(
+			endpoint,
+			{
+				...options,
+				method: 'PATCH',
+				body: JSON.stringify(body)
+			},
+			withHeaders
+		);
+	}
+
+	async delete(endpoint, options, withHeaders) {
+		this.request(endpoint, { ...options, method: 'DELETE' }, withHeaders);
+	}
+
+	buildQueryString(params) {
+		if (Object.keys(params).length > 0) {
+			return new URLSearchParams(params).toString();
+		}
+
+		return null;
+	}
+}
+
+class HttpError extends Error {
+	constructor(message, status, url) {
+		super(message);
+		this.status = status;
+		this.url = url;
+	}
+
+	consoleErr() {
+		console.log(`${this.status}: ${this.message}! URL=${this.url}`);
+	}
+}
+
+export { HttpError, Http };
+
+Файл - index.js
+Код:
+export {Http, HttpError} from './http';
+export {BaseApi} from './baseApi';
+export {API_CONFIG} from './apiConfig';
+
+
+Директория - D:\Programming\frontend\corp-portal\src\shared\assets
+
+Директория - D:\Programming\frontend\corp-portal\src\shared\hooks
+
+Файл - index.js
+Код:
+export { useProcessRender } from "./useProcessRender";
+
+Файл - useProcessRender.js
+Код:
+import { useState, useCallback } from "react";
+import { Skeleton, Loading, Error } from "../ui";
+
+export const useProcessRender = () => {
+	const [process, setProcess] = useState('waiting');
+
+	const renderContent = useCallback((process, Component) => {
+		switch (process) {
+			case 'waiting':
+				return Skeleton;
+			case 'loading':
+				return Loading;
+			case 'error':
+				return Error;
+			case 'success':
+				return Component
+			default:
+				throw new Error("Unknown process");
+		}
+	}, [])
+
+	return {process, setProcess, renderContent}
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\shared\ui
+
+Файл - index.js
+Код:
+export { Skeleton } from './skeleton/Skeleton';
+export { Loading } from './loading/Loading';
+export { Error } from './error/Error';
+export { SidebarIcons } from './icons/SidebarIcon';
+export { Navigation } from './navigation/Navigation';
+export { NavItem } from './nav-item/NavItem';
+export { AppContainer } from './app-container/AppContainer';
+export { CollapseedItem } from './collapsed-item/CollapsedItem';
+export { Tooltip } from './tooltip/Tooltip';
+export { Toolbar } from './toolbar/Toolbar';
+export {OpenBarButton} from './toolbar/OpenBarButton';
+export {Modal} from './modal/Modal';
+
+Директория - D:\Programming\frontend\corp-portal\src\shared\ui\app-container
+
+Файл - AppContainer.jsx
+Код:
+import styles from './appContainer.module.scss';
+
+export const AppContainer = ({children}) => {
+	return(
+		<div className={styles.container}>
+			{children}
+		</div>
+	)
+}
+
+Файл - appContainer.module.scss
+Код:
+.container {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  overflow-x: hidden;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\shared\ui\collapsed-item
+
+Файл - CollapsedItem.jsx
+Код:
+import { CSSTransition } from "react-transition-group";
+import { useRef } from "react";
+import './collapsedItem.scss';
+
+export const CollapseedItem = ({ children, isCollapsed, duration }) => {
+
+	const nodeRef = useRef(null);
+
+	return (
+		<CSSTransition
+			nodeRef={nodeRef}
+			in={!isCollapsed}
+			timeout={duration}
+			classNames="collapse"
+			unmountOnExit
+		>
+			<div className="collapse-item" ref={nodeRef}>
+				{children}
+			</div>
+		</CSSTransition>
+	)
+}
+
+Файл - collapsedItem.scss
+Код:
+.collapse-item {
+	overflow: hidden;
+	transition: all .4s ease;
+}
+
+.collapse-enter {
+	max-width: 0;
+	opacity: 0;
+}
+
+.collapse-enter-active {
+	max-width: 100%;
+	opacity: 1;
+	transition: all .4s ease;
+}
+
+.collapse-exit {
+	width: 100%;
+	opacity: 1;
+}
+
+.collapse-exit-active {
+	width: 0;
+	opacity: 0;
+	transition: all .4s ease;
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\shared\ui\error
+
+Файл - Error.jsx
+Код:
+import error from "../../assets/Error.gif";
+import styles from "./error.module.scss";
+
+export const Error = () => {
+
+	return (
+		<div className={styles.error}>
+			<img src={error} alt="Error" />
+		</div>
+	)
+}
+
+Файл - error.module.scss
+Код:
+.error{
+	
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\shared\ui\icons
+
+Файл - SidebarIcon.jsx
+Код:
+
+export const SidebarIcons = (props) => {
+
+	return (
+		<svg
+		{...props} 
+		width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" data-rtl-flip="" className="icon max-md:hidden"><path d="M6.83496 3.99992C6.38353 4.00411 6.01421 4.0122 5.69824 4.03801C5.31232 4.06954 5.03904 4.12266 4.82227 4.20012L4.62207 4.28606C4.18264 4.50996 3.81498 4.85035 3.55859 5.26848L3.45605 5.45207C3.33013 5.69922 3.25006 6.01354 3.20801 6.52824C3.16533 7.05065 3.16504 7.71885 3.16504 8.66301V11.3271C3.16504 12.2712 3.16533 12.9394 3.20801 13.4618C3.25006 13.9766 3.33013 14.2909 3.45605 14.538L3.55859 14.7216C3.81498 15.1397 4.18266 15.4801 4.62207 15.704L4.82227 15.79C5.03904 15.8674 5.31234 15.9205 5.69824 15.9521C6.01398 15.9779 6.383 15.986 6.83398 15.9902L6.83496 3.99992ZM18.165 11.3271C18.165 12.2493 18.1653 12.9811 18.1172 13.5702C18.0745 14.0924 17.9916 14.5472 17.8125 14.9648L17.7295 15.1415C17.394 15.8 16.8834 16.3511 16.2568 16.7353L15.9814 16.8896C15.5157 17.1268 15.0069 17.2285 14.4102 17.2773C13.821 17.3254 13.0893 17.3251 12.167 17.3251H7.83301C6.91071 17.3251 6.17898 17.3254 5.58984 17.2773C5.06757 17.2346 4.61294 17.1508 4.19531 16.9716L4.01855 16.8896C3.36014 16.5541 2.80898 16.0434 2.4248 15.4169L2.27051 15.1415C2.03328 14.6758 1.93158 14.167 1.88281 13.5702C1.83468 12.9811 1.83496 12.2493 1.83496 11.3271V8.66301C1.83496 7.74072 1.83468 7.00898 1.88281 6.41985C1.93157 5.82309 2.03329 5.31432 2.27051 4.84856L2.4248 4.57317C2.80898 3.94666 3.36012 3.436 4.01855 3.10051L4.19531 3.0175C4.61285 2.83843 5.06771 2.75548 5.58984 2.71281C6.17898 2.66468 6.91071 2.66496 7.83301 2.66496H12.167C13.0893 2.66496 13.821 2.66468 14.4102 2.71281C15.0069 2.76157 15.5157 2.86329 15.9814 3.10051L16.2568 3.25481C16.8833 3.63898 17.394 4.19012 17.7295 4.84856L17.8125 5.02531C17.9916 5.44285 18.0745 5.89771 18.1172 6.41985C18.1653 7.00898 18.165 7.74072 18.165 8.66301V11.3271ZM8.16406 15.995H12.167C13.1112 15.995 13.7794 15.9947 14.3018 15.9521C14.8164 15.91 15.1308 15.8299 15.3779 15.704L15.5615 15.6015C15.9797 15.3451 16.32 14.9774 16.5439 14.538L16.6299 14.3378C16.7074 14.121 16.7605 13.8478 16.792 13.4618C16.8347 12.9394 16.835 12.2712 16.835 11.3271V8.66301C16.835 7.71885 16.8347 7.05065 16.792 6.52824C16.7605 6.14232 16.7073 5.86904 16.6299 5.65227L16.5439 5.45207C16.32 5.01264 15.9796 4.64498 15.5615 4.3886L15.3779 4.28606C15.1308 4.16013 14.8165 4.08006 14.3018 4.03801C13.7794 3.99533 13.1112 3.99504 12.167 3.99504H8.16406C8.16407 3.99667 8.16504 3.99829 8.16504 3.99992L8.16406 15.995Z"></path></svg>
+	)
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\shared\ui\loading
+
+Файл - Loading.jsx
+Код:
+import spin from '../../assets/Spin.svg';
+import styles from './loading.module.scss';
+
+export const Loading = () => {
+    return (
+        <div className={styles.loading}>
+            <img src={spin} alt="Loading..." />
+        </div>
+    );
+}
+
+Файл - loading.module.scss
+Код:
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 48px;
+  
+  img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+
+Директория - D:\Programming\frontend\corp-portal\src\shared\ui\modal
+
+Файл - Modal.jsx
+Код:
+import styles from './modal.module.scss';
+
+export const Modal = ({children}) => {
+	return (
+		<div className={styles.overlay}>
+				{children}
+		</div>
+	)
+}
+
+Файл - modal.module.scss
+Код:
+.overlay{
+	position: fixed;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.6);
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\shared\ui\nav-item
+
+Файл - NavItem.jsx
+Код:
+import { NavLink } from "react-router"
+import styles from './navItem.module.scss';
+import { CollapseedItem } from "../collapsed-item/CollapsedItem";
+import { Tooltip } from "../tooltip/Tooltip";
+
+export const NavItem = ({ Icon, path, label, isCollapsed }) => {
+
+	return (
+		<Tooltip content={label} show={isCollapsed}>
+			<NavLink
+				to={path}
+				className={({ isActive }) =>
+					isActive ? `${styles.link} ${styles.linkActive}` : styles.link
+				}
+			>
+				<Icon className={styles.linkIcon} />
+				<CollapseedItem isCollapsed={isCollapsed} duration={400}>
+					<span className={styles.linkCaption}>{label}</span>
+				</CollapseedItem>
+			</NavLink>
+		</Tooltip>
+	)
+}
+
+Файл - navItem.module.scss
+Код:
+// Основные стили
+.link {
+  display: flex;
+  align-items: center;
+	gap: 16px;
+  text-decoration: none;
+  color: #5f6368;
+  padding: 14px 20px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  font-weight: 400;
+  
+  &:hover {
+    background-color: #f8f9fa;
+    color: #202124;
+  }
+  
+}
+
+.linkActive {
+  color: #1a73e8 !important;
+  background-color: #e8f0fe !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  
+  .linkIcon {
+    color: #1a73e8;
+    width: 28px !important;
+    height: 28px !important;
+  }
+}
+
+.linkCaption {
+  white-space: nowrap;
+  opacity: 1;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  
+  .linkActive & {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+  }
+}
+
+.linkIcon {
+  width: 24px !important;
+  height: 24px !important;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  color: #5f6368;
+  
+  .link:hover & {
+    color: #1a73e8;
+		opacity: 0.7;
+  }
+}
+
+
+
+Директория - D:\Programming\frontend\corp-portal\src\shared\ui\navigation
+
+Файл - Navigation.jsx
+Код:
+import { NavItem } from "../nav-item/NavItem";
+import { navigationItems } from '../../../widgets/sidebar/config/navigationItems';
+import styles from './navigation.module.scss';
+
+export const Navigation = ({ isCollapsed }) => {
+
+	return (
+		<nav>
+			{
+				navigationItems.map(({ id, iconComponent, ...item }) => (
+					<NavItem
+						className={styles.navigation}
+						key={id}
+						isCollapsed={isCollapsed}
+						Icon={iconComponent}
+						{...item}
+					/>
+				))
+			}
+		</nav>
+	)
+}
+
+Файл - navigation.module.scss
+Код:
+.navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 16px;
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\shared\ui\skeleton
+
+Файл - Skeleton.jsx
+Код:
+import { Skeleton as MUISkeleton } from "@mui/material";
+import styles from './skeleton.module.scss';
+
+export const Skeleton = (props) => {
+
+	return (
+		<div className={styles.skeletonContainer}>
+			{Array.from({length: 10}, (_, i) => <MUISkeleton variant="rectangular" key={i} {...props} />)}
+		</div>
+	)
+}
+
+Файл - skeleton.module.scss
+Код:
+.skeleton {
+	&Container {}
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\shared\ui\table
+
+Файл - index.js
+Код:
+export {Table} from './Table.jsx';
+export {TableHead} from './TableHead.jsx';
+export {TableBody} from './TableBody.jsx';
+export {TableRow} from './TableRow.jsx';
+export {TableCell} from './TableCell.jsx';
+
+Файл - Table.jsx
+Код:
+import styles from './styles/table.module.scss';
+
+export const Table = ({ children }) => {
+	return <table className={styles.table}>{children}</table>;
+}
+
+Файл - TableBody.jsx
+Код:
+import styles from './styles/table.module.scss';
+
+export const TableBody = ({ children }) => {
+	return <tbody className={styles.body}>{children}</tbody>;
+}
+
+Файл - TableCell.jsx
+Код:
+import styles from './styles/table.module.scss';
+
+export const TableCell = ({ children, isHeader = false, className, style }) => {
+	const Cell = isHeader ? 'th' : 'td';
+	return <Cell
+		className={`${styles.cell} ${className}`}
+		style={style}
+	>
+		{children}
+	</Cell>;
+}
+
+Файл - TableHead.jsx
+Код:
+import styles from './styles/table.module.scss';
+
+export const TableHead = ({ children }) => {
+	return <thead className={styles.head}>{children}</thead>;
+}
+
+Файл - TableRow.jsx
+Код:
+import styles from './styles/table.module.scss';
+
+export const TableRow = ({ children, ...props}) => {
+	return <tr className={styles.row} {...props}>{children}</tr>;
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\shared\ui\table\styles
+
+Файл - table.module.scss
+Код:
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  .head {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 2px solid #dee2e6;
+  }
+
+  .body {
+    background-color: #ffffff;
+  }
+
+  .row {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #e9ecef;
+    
+    &:hover {
+      background-color: #f8f9fa;
+    }
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    // Для строк данных с курсором pointer
+    &[style*="cursor: pointer"] {
+      &:hover {
+        background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+        cursor: pointer;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+      }
+      
+      &:active {
+        background: linear-gradient(135deg, #bbdefb 0%, #e1bee7 100%);
+        transform: translateY(0);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      &[style*="cursor: pointer"] {
+        &:hover {
+          transform: none;
+          box-shadow: none;
+        }
+      }
+    }
+  }
+
+  .cell {
+    padding: 18px 16px;
+    text-align: left;
+    vertical-align: middle;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #212529;
+    
+    // Стили для заголовков
+    &:is(th) {
+      font-weight: 700;
+      color: #495057;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 20px 16px;
+      background: transparent;
+      border-bottom: none;
+    }
+    
+    // Стили для обычных ячеек
+    &:is(td) {
+      border-bottom: 1px solid #e9ecef;
+      
+      // Последний столбец (заявки) - выделяем
+      &:last-child {
+        text-align: center;
+        font-weight: 500;
+      }
+      
+      // Первый столбец (ФИО) - выделяем
+      &:first-child {
+        font-weight: 500;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      padding: 14px 12px;
+      font-size: 13px;
+      
+      &:is(th) {
+        padding: 16px 12px;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      padding: 12px 8px;
+      font-size: 12px;
+      
+      &:is(th) {
+        padding: 14px 8px;
+        font-size: 10px;
+      }
+      
+      // Скрываем некоторые колонки на мобильных
+      &:nth-child(3), // Пол
+      &:nth-child(5) { // Телефон
+        display: none;
+      }
+    }
+  }
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\shared\ui\toolbar
+
+Файл - OpenBarButton.jsx
+Код:
+import styles from './toolbar.module.scss';
+import { IconButton } from '@mui/material';
+
+export const OpenBarButton = ({ onShow, Icon, isActive, ...props }) => {
+
+	const color = isActive ? "primary" : "";
+
+	return (
+		<IconButton
+			className={styles.openBarButton}
+			onClick={() => onShow(true)}
+			{...props}
+		>
+			<Icon color={color}/>
+		</IconButton>
+	);
+}
+
+Файл - Toolbar.jsx
+Код:
+import styles from './toolbar.module.scss';
+import { Paper, Box, IconButton, Button, Typography } from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
+
+export const Toolbar = ({ children, onClose, isActive, onReset, caption, ...props }) => {
+	
+	return (
+		<Paper className={styles.toolbar} {...props}>
+			<Box className={styles.header}>
+				<Typography className={styles.caption}>
+					{caption}
+				</Typography>
+				<IconButton onClick={onClose}>
+					<ClearIcon />
+				</IconButton>
+			</Box>
+
+			<Box className={styles.content}>
+				{children}
+			</Box>
+			{isActive && (
+				<Button onClick={() => {
+					onReset();
+					onClose();
+				}}
+					variant="contained" size="small"
+					className={styles.resetButton}
+					>
+					Сбросить
+				</Button>
+			)}
+		</Paper>
+	)
+}
+
+Файл - toolbar.module.scss
+Код:
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+
+	.caption {
+		font-weight: 700;
+		font-size: 16px;
+		letter-spacing: 1px;
+		margin: 0 auto;
+	}
+
+	@media (max-width: 768px) {
+		.caption {
+			font-size: 14px;
+		}
+	}
+}
+
+.content {
+	margin-bottom: 10px;
+}
+
+
+.openBarButton {
+	border-radius: 10px;
+	margin-right: 8px;
+	transition: all 0.2s ease;
+
+	&:hover {
+		background-color: rgba(25, 118, 210, 0.08);
+		transform: scale(1.05);
+	}
+
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\shared\ui\tooltip
+
+Файл - Tooltip.jsx
+Код:
+import { useState } from "react";
+import styles from './tooltip.module.scss';
+
+export const Tooltip = ({
+	children, 
+	content,
+	position = "right",
+	show=true,
+	delay = 200
+}) => {
+	const [isVisible, setIsVisible] = useState(false);
+	const [timeoutId, setTimeoutId] = useState(null);
+
+	const showTooltip = () => {
+		const id = setTimeout(() => {
+			setIsVisible(true);
+		}, delay);
+		setTimeoutId(id);
+	}
+
+	const hideTooltip = () => {
+		clearTimeout(timeoutId);
+		setTimeoutId(null);
+		setIsVisible(false);
+	}
+
+	return (
+		<div 
+		onMouseEnter={showTooltip}
+		onMouseLeave={hideTooltip}
+		className={styles.tooltipContainer}>
+			{children}
+			{show && isVisible && ViewTooltip(content, position)}
+		</div>
+	)
+}
+
+const ViewTooltip = (content, position) => {
+	return (
+		<div className={`${styles.tooltip} ${styles[position]}`}>
+			<span className={styles.tooltipContent}>{content}</span>
+		</div>
+	)
+}
+
+Файл - tooltip.module.scss
+Код:
+.tooltipContainer{
+	position: relative;
+}
+
+.tooltip{
+	position: absolute;
+	z-index: 2;
+	padding: 8px 12px;
+  background-color: #2d3748;
+  color: white;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	animation: fadeIn 0.2s ease-in-out;
+
+	&.right{
+		left: calc(100% + 8px);
+		top: 50%;
+		transform: translateY(-50%);
+	}
+	&.left{
+		right: calc(100% + 8px);
+		top: 50%;
+		transform: translateY(-50%);
+	}
+
+	&.top{
+		bottom: calc(100% + 8px);
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	&.bottom{
+		top: calc(100% + 8px);
+		left: 50%;
+		transform: translateX(-50%);
+	}
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+	}
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\widgets
+
+Директория - D:\Programming\frontend\corp-portal\src\widgets\employee
+
+Файл - index.js
+Код:
+export { Employee } from "./ui/Employee";
+
+Директория - D:\Programming\frontend\corp-portal\src\widgets\employee\configs
+
+Файл - tabComponent.js
+Код:
+import {
+	PersonDetails,
+	DocumentDetails,
+	FamilyMemberDetails,
+	EducationDetails,
+	EmploymentDetails,
+	TicketDetails
+} from "../../../features/employee-details"
+
+export const TAB_COMPONENT = {
+	persons: PersonDetails,
+	documents: DocumentDetails,
+	familyMembers: FamilyMemberDetails,
+	educations: EducationDetails,
+	employments: EmploymentDetails,
+	tickets: TicketDetails
+}
+
+Файл - tabs.js
+Код:
+
+
+export const TABS = {
+	persons: "Основные данные",
+	documents: "Документы",
+	familyMembers: "Члены семьи",
+	educations: "Образование",
+	employments: "Опыт работы",
+	tickets: "заявки"
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\widgets\employee\styles
+
+Файл - employee.module.scss
+Код:
+.card {
+	background-color: #fff;
+	width: 70%;
+	height: 95%;
+	border-radius: 18px 18px 13px 13px;
+
+	&Header{
+		background-color: #1976d2;
+		border-radius: 15px 15px 0 0;
+		padding: 20px;
+		display: grid;
+		gap: 0 20px;
+		grid-template-columns: 70px auto;
+		grid-template-rows: auto auto;
+	}
+
+	&Avatar{
+		width: 70px;
+		height: 70px;
+		grid-row: 1/3;
+	}
+	&Name{
+		grid-column-start: 2;
+		grid-row-start: 2;
+		color: #ffffff;
+	}
+
+	&Title {
+		color: #ffffff;
+		font-weight: 900;
+		font-size: 25px;
+	}
+
+	&Menu {}
+
+	&MenuList {
+    list-style-type: none;
+    display: flex;
+    justify-content: stretch;
+    flex-wrap: wrap;
+		gap: 3px;
+    padding: 5px;
+		background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+
+    & > li {
+      flex-grow: 1;
+      background-color: #1976d2ee;
+      padding: 3px 2px;
+      border-radius: 2px 2px 10px 10px;
+			font-size: 16px;
+			color: #fff;
+      
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+		.tabActive{
+			background-color: #c44242;
+		}
+  }
+
+	&Content{
+		height: calc(100vh - 200px);
+		overflow-y: auto;
+	}
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\widgets\employee\ui
+
+Файл - Employee.jsx
+Код:
+import { Modal } from "../../../shared/ui";
+import { EmployeeCard } from "./EmployeeCard";
+import { useFetchDetails } from "../../../features/employee-details";
+import {TAB_COMPONENT} from "../configs/tabComponent";
+
+import styles from "../styles/employee.module.scss";
+
+import { useParams } from "react-router";
+import { useMemo } from "react";
+
+export const Employee = () => {
+	const { id: employeeId } = useParams();
+	const { setTab, tab, data, employee } = useFetchDetails(employeeId, "persons");
+	console.log(data);
+
+	//useMemo, чтобы не скакали данные, т.к. обновление стейта tab происходит перед data 
+	const Component = useMemo(() => TAB_COMPONENT[tab], [data]);
+
+	return (
+		<Modal>
+			<EmployeeCard
+				employee={employee}
+				tabActive={tab}
+				onClickTab={setTab}
+				contentData={data}
+			>
+				<Component data={data} />
+			</EmployeeCard>
+		</Modal>
+	)
+}
+
+Файл - EmployeeCard.jsx
+Код:
+import styles from '../styles/employee.module.scss';
+import { EmployeeAvatar } from '../../../entities/employee/ui/EmployeeAvatar';
+import { TABS } from '../configs/tabs';
+
+
+export const EmployeeCard = ({ children, employee, onClickTab, tabActive }) => {
+
+	return (
+		<div className={styles.card}>
+			<div className={styles.cardHeader}>
+				<div className={styles.cardAvatar}>
+					<EmployeeAvatar fullName={employee?.fullName} />
+				</div>
+				<div className={styles.cardTitle}>
+					Карточка сотрудника
+				</div>
+				<div className={styles.cardName}>
+					{employee?.fullName}
+				</div>
+			</div>
+
+			<div className={styles.cardMenu}>
+				<ul className={styles.cardMenuList}>
+					{
+						Object.entries(TABS).map(([tab, label]) => (
+							<li
+								key={tab}
+								onClick={() => onClickTab(tab)}
+								className={tabActive === tab ? styles.tabActive : ""}
+							>
+								{label}
+							</li>
+						))
+					}
+				</ul>
+			</div>
+			<div className={styles.cardContent}>
+				{children}
+			</div>
+		</div>
+	)
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\widgets\employees-table
+
+Файл - index.js
+Код:
+export {EmployeeTable} from './ui/EmployeeTable';
+
+
+Директория - D:\Programming\frontend\corp-portal\src\widgets\employees-table\model
+
+Файл - useFetchEmployees.js
+Код:
+import { useState, useEffect, useCallback } from "react"
+import { employeeApi } from "../../../entities/employee";
+
+
+
+export const useFetchEmployees = ({ filters, sort, pagination, setProcess }) => {
+	const [employees, setEmployees] = useState([]);
+	const [totalItems, setTotalItems] = useState(0);
+	const [currentItems, setCurrentItems] = useState([0, 0]);
+
+	const fetchEmployees = useCallback(async () => {
+		console.log("fetchEmployee")
+		try {
+			if (employees.length === 0) setProcess('loading'); 
+			const params = {
+				...pagination?.apiParams,
+				...filters?.apiParams,
+				...sort?.apiParams
+			}
+			const { data, totalItems, currentItems, } = await employeeApi.getEmployeesForTable(params);
+			setProcess('success');
+			setEmployees(data); 
+			setCurrentItems(currentItems);
+			setTotalItems(totalItems);
+
+		} catch (err) {
+			setProcess('error')
+			console.error(err);
+		}
+	}, [pagination, sort, filters]);
+
+	useEffect(() => {
+		fetchEmployees();
+	}, [fetchEmployees]);
+
+	return {
+		employees,
+		totalItems,
+		currentItems
+	}
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\widgets\employees-table\styles
+
+Файл - employeeTable.module.scss
+Код:
+.pageContainer {
+	display: flex;
+	justify-content: center;
+	padding: 16px;
+	width: 100%;
+
+	@media (max-width: 1200px) {
+		padding: 8px;
+	}
+}
+
+.container {
+	width: 100%;
+	max-width: 1400px;
+	border-radius: 12px;
+	overflow: visible;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	background-color: #ffffff;
+
+	@media (min-width: 2000px) {
+		max-width: 1600px;
+	}
+
+	@media (max-width: 768px) {
+		border-radius: 8px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	}
+}
+
+.controlsSection {
+	padding: 16px 24px 8px;
+	background-color: #fafafa;
+	border-bottom: 1px solid #e0e0e0;
+
+	@media (max-width: 768px) {
+		padding: 12px 16px 6px;
+	}
+}
+
+.controlsRow {
+	display: flex;
+	justify-content: flex-start;
+	margin-bottom: 8px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	:global(.MuiPaper-root) {
+		max-width: 600px !important;
+		width: auto !important;
+	}
+}
+
+.employeeTable {
+	padding: 24px;
+	background-color: #ffffff;
+
+	.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 24px;
+
+		.title {
+			font-size: 28px;
+			font-weight: 700;
+			color: #1976d2;
+			margin: 0;
+
+			@media (max-width: 768px) {
+				font-size: 24px;
+			}
+
+			@media (max-width: 480px) {
+				font-size: 20px;
+			}
+		}
+
+		.controls {
+			display: flex;
+			gap: 12px;
+			align-items: center;
+
+			@media (max-width: 768px) {
+				gap: 8px;
+			}
+		}
+
+		@media (max-width: 768px) {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 16px;
+		}
+	}
+
+	.tableContainer {
+		border-radius: 12px;
+		overflow: visible;
+		margin-bottom: 0; // Убираем отступ, так как пагинация теперь внутри
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+		@media (max-width: 768px) {
+			border-radius: 8px;
+			box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+		}
+	}
+
+	@media (max-width: 768px) {
+		padding: 16px;
+	}
+
+	@media (max-width: 480px) {
+		padding: 12px;
+	}
+}
+
+.cellFullName {
+	font-weight: 600;
+	color: #1976d2;
+	cursor: pointer;
+	transition: color 0.2s ease;
+
+	&:hover {
+		color: #1565c0;
+	}
+}
+
+.cellGender {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	font-weight: 700;
+	font-size: 13px;
+	transition: transform 0.2s ease;
+
+	&:hover {
+		transform: scale(1.05);
+	}
+
+	&--male {
+		background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+		color: #1976d2;
+	}
+
+	&--female {
+		background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+		color: #c2185b;
+	}
+
+	@media (max-width: 768px) {
+		width: 32px;
+		height: 32px;
+		font-size: 12px;
+	}
+}
+
+.cellTicketsCount {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 28px;
+	height: 28px;
+	border-radius: 14px;
+	font-weight: 700;
+	font-size: 13px;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+	&:hover {
+		transform: scale(1.05);
+	}
+
+	&--hasTickets {
+		background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+		color: #d32f2f;
+		border: 2px solid rgba(211, 47, 47, 0.2);
+		box-shadow: 0 2px 4px rgba(211, 47, 47, 0.1);
+	}
+
+	&--noTickets {
+		background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+		color: #6c757d;
+		border: 2px solid rgba(108, 117, 125, 0.1);
+	}
+
+	@media (max-width: 768px) {
+		min-width: 24px;
+		height: 24px;
+		font-size: 11px;
+	}
+}
+
+.pageFiltersActive{
+	color: #0a72e8 !important;
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\widgets\employees-table\ui
+
+Файл - EmployeeRow.jsx
+Код:
+import { useOpenDetails } from '../../../entities/employee';
+
+import { TableRow, TableCell } from '../../../shared/ui/table';
+import styles from '../styles/employeeTable.module.scss';
+
+
+
+export const EmployeeRow = ({ employee }) => {
+	const openDetails = useOpenDetails();
+	const localFormatDate = (dateString) => {
+		const localDate = new Date(dateString).toLocaleDateString('ru-Ru')
+		return localDate.replaceAll(".", "-");
+	}
+
+	return (
+		<TableRow onClick={() => openDetails(employee.id, employee)} style={{ cursor: 'pointer' }}>
+			<TableCell>
+				<span className={styles.cellFullName}>{employee.fullName}</span>
+			</TableCell>
+			<TableCell>{localFormatDate(employee.birthDate)}</TableCell>
+			<TableCell>
+				<span className={`${styles.cellGender} ${styles[`cellGender--${employee.gender}`]}`}>
+					{employee.gender === "male" ? "М" : "Ж"}
+				</span>
+			</TableCell>
+			<TableCell>{employee.department}</TableCell>
+			<TableCell>{employee.phone}</TableCell>
+			<TableCell>
+				<span className={`${styles.cellTicketsCount} ${employee.hasTickets ? styles['cellTicketsCount--hasTickets'] : styles['cellTicketsCount--noTickets']}`}>
+					{employee.ticketsCount}
+				</span>
+			</TableCell>
+		</TableRow>
+	)
+}
+
+Файл - EmployeeTable.jsx
+Код:
+import { useFetchEmployees } from "../model/useFetchEmployees";
+import { usePagination, PaginationControls } from "../../../features/employees-pagination";
+import { useServerFilter, ServerFiltersBar, usePageFilter } from "../../../features/employees-filtering";
+import { useServerSort, ServerSortBar, usePageSort } from "../../../features/employees-sorting";
+import { Table } from "../../../shared/ui/table";
+import { useProcessRender } from "../../../shared/hooks";
+import styles from "../styles/EmployeeTable.module.scss";
+import { EmployeeTableHeader } from "./EmployeeTableHeader";
+import { EmployeeTableBody } from "./EmployeeTableBody";
+
+import { Paper } from "@mui/material";
+
+export const EmployeeTable = () => {
+	console.log("render EmployeeTable");
+	const { process, setProcess, renderContent } = useProcessRender();
+
+	const pagination = usePagination(10);
+	const serverFilters = useServerFilter(pagination.resetPagination);
+	const serverSort = useServerSort();
+
+	const { employees, totalItems, currentItems } = useFetchEmployees({
+		pagination,
+		filters: serverFilters,
+		sort: serverSort,
+		setProcess
+	});
+
+	const pageFilters = usePageFilter(employees);
+	const pageFilredEmp = pageFilters.hasActiveFilters ? pageFilters.filteredEmployees : employees;
+
+	const pageSort = usePageSort(pageFilredEmp);
+	const processedEmp = pageSort.sortedEmployees;
+
+	const View = () => (
+		<div className={styles.employeeTable}>
+			<div className={styles.header}>
+				<h2 className={styles.title}>Сотрудники</h2>
+			</div>
+			<div className={styles.tableContainer}>
+				<Table>
+					<EmployeeTableHeader
+						onFilterChange={pageFilters.updateFilters}
+						filters={pageFilters.filters}
+						sort={pageSort.sort}
+						onUpdateSort={pageSort.updateSort}
+					/>
+					<EmployeeTableBody
+						employees={processedEmp}
+					/>
+				</Table>
+			</div>
+			<PaginationControls
+				currentItems={currentItems}
+				currentPage={pagination.currentPage}
+				totalItems={totalItems}
+				itemPerPage={pagination.itemPerPage}
+				onChangePage={pagination.changePage}
+				onSetPage={pagination.setPage}
+				onSetItemsPerPage={pagination.setItemPerPage}
+			/>
+		</div>);
+
+	const Content = renderContent(process, View)
+
+	return (
+		<div className={styles.pageContainer}>
+			<Paper className={styles.container}>
+				<div className={styles.controlsSection}>
+					<div className={styles.controlsRow}>
+						<ServerFiltersBar
+							filters={serverFilters.filters}
+							onFilterChange={serverFilters.updateFilters}
+							onReset={serverFilters.resetFilters}
+							hasActiveFilters={serverFilters.hasActiveFilters}
+						/>
+					</div>
+					<div className={styles.controlsRow}>
+						<ServerSortBar
+							sort={serverSort.sort}
+							onUpdateSort={serverSort.updateSort}
+							onResetSort={serverSort.resetSort}
+							hasActiveSort={serverSort.hasActiveSort}
+						/>
+					</div>
+				</div>
+				<Content />
+			</Paper>
+		</div>
+	)
+}
+
+
+Файл - EmployeeTableBody.jsx
+Код:
+import {EmployeeRow} from "./EmployeeRow";
+import {TableBody} from "../../../shared/ui/table";
+
+export const EmployeeTableBody = ({employees}) => {
+	return (
+		<TableBody>
+			{
+				employees.map(employee => (
+					<EmployeeRow
+						key={employee.id}
+						employee={employee}
+					/>
+				))
+			}
+		</TableBody>
+	)
+}
+
+Файл - EmployeeTableHeader.jsx
+Код:
+import { TableHead, TableCell, TableRow } from "../../../shared/ui/table";
+import { FILTER_FIELDS, PageFilterButton } from '../../../features/employees-filtering';
+import { PageSortButton } from "../../../features/employees-sorting";
+
+import styles from "../styles/employeeTable.module.scss";
+
+export const EmployeeTableHeader = ({ onFilterChange, filters, sort, onUpdateSort }) => {
+	return (
+		<TableHead>
+			<TableRow>
+				<TableCell isHeader
+					style={{ cursor: "pointer" }}
+					className={sort.field === "fullName" ? styles.pageFiltersActive : ""}
+				>
+					<PageSortButton
+						onUpdateSort={onUpdateSort}
+						direction={sort.field === "fullName" ? sort.direction : null}
+						field={"fullName"}
+					>
+						ФИО
+					</PageSortButton>
+				</TableCell>
+				<TableCell isHeader
+					style={{ cursor: "pointer" }}
+					className={sort.field === "birthDate" ? styles.pageFiltersActive : ""}
+				>
+					<PageSortButton
+						onUpdateSort={onUpdateSort}
+						direction={sort.field === "birthDate" ? sort.direction : null}
+						field={"birthDate"}
+					>
+						Дата рождения
+					</PageSortButton>
+				</TableCell>
+				<TableCell isHeader
+					style={{ cursor: "pointer" }}
+					className={filters.gender ? styles.pageFiltersActive : ""}
+				>
+					<PageFilterButton
+						fieldFilters={FILTER_FIELDS.GENDER}
+						onFilterChange={onFilterChange}>
+						Пол
+					</PageFilterButton>
+				</TableCell>
+				<TableCell isHeader
+					style={{ cursor: "pointer" }}
+					className={filters.department ? styles.pageFiltersActive : ""}
+				>
+					<PageFilterButton
+						fieldFilters={FILTER_FIELDS.DEPARTMENT}
+						onFilterChange={onFilterChange}>
+						Подразделение
+					</PageFilterButton>
+				</TableCell>
+				<TableCell isHeader>
+					Телефон
+				</TableCell>
+				<TableCell isHeader
+					style={{ cursor: "pointer" }}
+					className={sort.field === "ticketsCount" ? styles.pageFiltersActive : ""}
+				>
+					{/* <PageFilterButton
+						fieldFilters={FILTER_FIELDS.HAS_TICKETS}
+						onFilterChange={onFilterChange}>
+						Заявки
+					</PageFilterButton> */}
+					<PageSortButton
+						onUpdateSort={onUpdateSort}
+						direction={sort.field === "ticketsCount" ? sort.direction : null}
+						field={"ticketsCount"}
+					>
+						Заявки
+					</PageSortButton>
+				</TableCell>
+			</TableRow>
+		</TableHead>
+	)
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\widgets\sidebar
+
+Файл - index.js
+Код:
+export {Sidebar} from './ui/Sidebar';
+
+Директория - D:\Programming\frontend\corp-portal\src\widgets\sidebar\config
+
+Файл - navigationItems.js
+Код:
+import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
+import GroupIcon from '@mui/icons-material/Group';
+
+export const navigationItems = [
+	{
+		id: "index",
+		label: "Главная",
+		iconComponent: SpaceDashboardIcon,
+		path: "/",
+	},
+	{
+		id: "employees",
+		label: "Cотрудники",
+		iconComponent: GroupIcon,
+		path: '/employees'
+	}
+]
+
+Директория - D:\Programming\frontend\corp-portal\src\widgets\sidebar\styles
+
+Файл - sidebar.module.scss
+Код:
+.sidebar {
+	display: flex;
+	flex-direction: column;
+	max-width: 300px;
+	transition: all 0.4s ease;
+	//overflow: hidden;
+
+	&.collapsed {
+		transition: all 0.4s ease;
+		max-width: 70px;
+	}
+
+	&.expanded {
+		transition: all 0.4s ease;
+		max-width: 300px;
+	}
+}
+
+
+.toggleButton {
+	align-self: end !important;
+	padding: 14px 20px !important;
+}
+
+Директория - D:\Programming\frontend\corp-portal\src\widgets\sidebar\ui
+
+Файл - Sidebar.jsx
+Код:
+import { useSidebarToggle, ToggleBarButton } from "../../../features/sidebar-toggle";
+import { Navigation } from "../../../shared/ui";
+import { Paper } from "@mui/material";
+import styles from '../styles/sidebar.module.scss';
+import { Tooltip } from "../../../shared/ui";
+
+export const Sidebar = () => {
+
+	const { isCollapsed, toggle } = useSidebarToggle();
+	const iconProps = {
+		style: {
+			height: "25px",
+			width: "25px"
+		}
+	}
+
+	return (
+		<Paper
+			component='aside'
+			elevation={3}
+			className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : styles.expanded}`}
+		>
+			<Tooltip content={isCollapsed ? "Открыть меню" : "Закрыть меню"}>
+				<ToggleBarButton onToggle={toggle} iconProps={iconProps} className={styles.toggleButton} />
+			</Tooltip>
+			<Navigation isCollapsed={isCollapsed} />
+		</Paper>
+	)
+}

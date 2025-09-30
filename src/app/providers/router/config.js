@@ -1,4 +1,4 @@
-import { Dashboards, Employees, Root } from '../../../pages';
+import { Dashboards, Employees, Root, EmployeeProfile } from '../../../pages';
 
 export const routes = [
 	{
@@ -6,7 +6,10 @@ export const routes = [
 		Component: Root,
 		children: [
 			{ index: true, Component: Dashboards },
-			{path: "/employees", Component: Employees}
+			{path: "/employees", Component: Employees, children: [
+				{path: "/employees/:id", Component: EmployeeProfile}
+			]
+			}
 		]
 	}
 ]
