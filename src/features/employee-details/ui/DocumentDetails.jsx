@@ -17,7 +17,6 @@ import { useFormUpdate } from "../model/useFormUpdate";
 import styles from "../styles/employeeDetails.module.scss";
 import { ControlChangeBtn } from "./ControlChangeBtn";
 
-
 export const DocumentDetails = ({ data, onSave }) => {
 
 	const { form, changeForm, changed, changedIndexs, resetFormIndex } = useFormUpdate(data);
@@ -27,8 +26,6 @@ export const DocumentDetails = ({ data, onSave }) => {
 	} else if (!form?.length) {
 		return <Typography variant="h2" className={styles.notFound} >Документы не добавлены</Typography>;
 	}
-
-
 
 	return (
 		<div className={styles.container}>
@@ -129,7 +126,7 @@ export const DocumentDetails = ({ data, onSave }) => {
 						</Grid>
 						{
 							changed && changedIndexs.includes(index) &&
-							<ControlChangeBtn onSave={() => onSave(index)} onReset={() => resetFormIndex(index)} />
+							<ControlChangeBtn onSave={() => onSave(doc.id, doc, index)} onReset={() => resetFormIndex(index)} />
 						}
 					</Paper>
 				))}

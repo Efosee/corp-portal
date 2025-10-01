@@ -14,6 +14,20 @@ export const useFetchDetails = (personId, initTab, initState) => {
 		setData(data);
 	}, [personId, tab]);
 
+	const handleChangeData = useCallback((newData, index) => {
+		if (index !== undefined) {
+			console.log("SET NEW DATA", newData, data)
+			setData(prev => {
+				const items = [...prev];
+				items[index] = { ...newData }
+				console.log("update data", items)
+				return items;
+			})
+		} else {
+			setData(newData);
+		}
+	}, [data])
+
 	useEffect(() => {
 		fetchData();
 	}, [tab, personId]);
@@ -29,6 +43,7 @@ export const useFetchDetails = (personId, initTab, initState) => {
 		setTab,
 		tab,
 		data,
-		employee
+		employee,
+		handleChangeData
 	}
 }

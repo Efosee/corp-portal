@@ -150,7 +150,7 @@ export const EducationDetails = ({ data, onSave }) => {
 						</Grid>
 						{
 							changed && changedIndexs.includes(index) &&
-							<ControlChangeBtn onSave={() => onSave(index)} onReset={() => resetFormIndex(index)} />
+							<ControlChangeBtn onSave={() => onSave(edu.id, edu, index)} onReset={() => resetFormIndex(index)} />
 						}
 					</Paper>
 				))}

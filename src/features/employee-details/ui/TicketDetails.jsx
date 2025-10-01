@@ -175,7 +175,7 @@ export const TicketDetails = ({ data, onSave }) => {
 						</Grid>
 						{
 							changed && changedIndexs.includes(index) &&
-							<ControlChangeBtn onSave={() => onSave(index)} onReset={() => resetFormIndex(index)} />
+							<ControlChangeBtn onSave={() => onSave(ticket.id, ticket, index)} onReset={() => resetFormIndex(index)} />
 						}
 					</Paper>
 				))}

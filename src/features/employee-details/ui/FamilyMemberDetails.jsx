@@ -115,7 +115,7 @@ export const FamilyMemberDetails = ({ data, onSave }) => {
 						</Grid>
 						{
 							changed && changedIndexs.includes(index) &&
-							<ControlChangeBtn onSave={() => onSave(index)} onReset={() => resetFormIndex(index)} />
+							<ControlChangeBtn onSave={() => onSave(member.id, member, index)} onReset={() => resetFormIndex(index)} />
 						}
 					</Paper>
 				))}

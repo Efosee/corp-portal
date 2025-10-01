@@ -218,7 +218,7 @@ export const PersonDetails = ({ data, onSave }) => {
 
 			{
 				changed &&
-				<ControlChangeBtn onSave={() => onSave(index)} onReset={resetForm} />
+				<ControlChangeBtn onSave={() => onSave(form.id, form)} onReset={resetForm} />
 			}
 		</div>
 	);
