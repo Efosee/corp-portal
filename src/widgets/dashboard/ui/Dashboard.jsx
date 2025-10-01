@@ -11,19 +11,7 @@ import { employeeApi, ticketsApi, documentApi, educationApi } from '../../../ent
 import { analyticsApi } from '../../../entities/analytics/api/analyticsApi';
 import { MetricCard } from '../../../shared/ui/metric-card/MetricCard';
 import styles from '../styles/dashboard.module.scss';
-
-const COLORS = {
-	blue: ['#2196F3', '#1976D2'],
-	red: ['#F44336', '#D32F2F'],
-	purple: ['#9C27B0', '#7B1FA2'],
-	green: ['#4CAF50', '#388E3C'],
-	orange: ['#FF9800', '#F57C00'],
-	pink: ['#E91E63', '#C2185B'],
-	teal: ['#009688', '#00796B'],
-	amber: ['#FFC107', '#FFA000']
-};
-
-const PIE_COLORS = ['#2196F3', '#F44336', '#4CAF50', '#FF9800', '#9C27B0', '#00BCD4'];
+import {SETTINGS} from '../config/settings';
 
 export const Dashboard = () => {
 	const [metrics, setMetrics] = useState({
@@ -50,7 +38,7 @@ export const Dashboard = () => {
 		try {
 			setLoading(true);
 
-			//Метрики
+			//Метрики (для карточек)
 			const [totalEmp, activeTickets, totalDocs, totalEdu, medianAge] = await Promise.all([
 				employeeApi.getTotalCount(),
 				ticketsApi.getTotalCountActive(),
@@ -102,16 +90,8 @@ export const Dashboard = () => {
 			})));
 
 			//Распределение по возрасту
-			const ageRanges = [
-				{ label: '1960-е', gte: '1960-01-01', lte: '1969-12-31' },
-				{ label: '1970-е', gte: '1970-01-01', lte: '1979-12-31' },
-				{ label: '1980-е', gte: '1980-01-01', lte: '1989-12-31' },
-				{ label: '1990-е', gte: '1990-01-01', lte: '1999-12-31' },
-				{ label: '2000-е', gte: '2000-01-01', lte: '2009-12-31' }
-			];
-
 			const ageCounts = await Promise.all(
-				ageRanges.map(async range => ({
+				SETTINGS.AGE_RANGES.map(async range => ({
 					name: range.label,
 					count: await employeeApi.getTotalCountByRange({ birthDate: { gte: range.gte, lte: range.lte } })
 				}))
@@ -150,7 +130,7 @@ export const Dashboard = () => {
 					<MetricCard
 						title="Всего сотрудников"
 						value={metrics.totalEmployees}
-						gradient={`linear-gradient(135deg, ${COLORS.blue[0]} 0%, ${COLORS.blue[1]} 100%)`}
+						gradient={`linear-gradient(135deg, ${SETTINGS.COLORS.blue[0]} 0%, ${SETTINGS.COLORS.blue[1]} 100%)`}
 						icon={GroupIcon}
 						isLoading={loading}
 					/>
@@ -159,7 +139,7 @@ export const Dashboard = () => {
 					<MetricCard
 						title="Активные заявки"
 						value={metrics.activeTickets}
-						gradient={`linear-gradient(135deg, ${COLORS.red[0]} 0%, ${COLORS.red[1]} 100%)`}
+						gradient={`linear-gradient(135deg, ${SETTINGS.COLORS.red[0]} 0%, ${SETTINGS.COLORS.red[1]} 100%)`}
 						icon={ConfirmationNumberIcon}
 						isLoading={loading}
 					/>
@@ -168,7 +148,7 @@ export const Dashboard = () => {
 					<MetricCard
 						title="Документы в системе"
 						value={metrics.totalDocuments}
-						gradient={`linear-gradient(135deg, ${COLORS.purple[0]} 0%, ${COLORS.purple[1]} 100%)`}
+						gradient={`linear-gradient(135deg, ${SETTINGS.COLORS.purple[0]} 0%, ${SETTINGS.COLORS.purple[1]} 100%)`}
 						icon={DescriptionIcon}
 						isLoading={loading}
 					/>
@@ -177,7 +157,7 @@ export const Dashboard = () => {
 					<MetricCard
 						title="Образования"
 						value={metrics.totalEducations}
-						gradient={`linear-gradient(135deg, ${COLORS.green[0]} 0%, ${COLORS.green[1]} 100%)`}
+						gradient={`linear-gradient(135deg, ${SETTINGS.COLORS.green[0]} 0%, ${SETTINGS.COLORS.green[1]} 100%)`}
 						icon={SchoolIcon}
 						isLoading={loading}
 					/>
@@ -186,7 +166,7 @@ export const Dashboard = () => {
 					<MetricCard
 						title="Средний возраст сотрудников"
 						value={`${metrics.medianAge} лет`}
-						gradient={`linear-gradient(135deg, ${COLORS.orange[0]} 0%, ${COLORS.orange[1]} 100%)`}
+						gradient={`linear-gradient(135deg, ${SETTINGS.COLORS.orange[0]} 0%, ${SETTINGS.COLORS.orange[1]} 100%)`}
 						icon={CakeIcon}
 						isLoading={loading}
 					/>
@@ -213,7 +193,7 @@ export const Dashboard = () => {
 									dataKey="value"
 								>
 									{genderData.map((entry, index) => (
-										<Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+										<Cell key={`cell-${index}`} fill={SETTINGS.PIE_COLORS[index % SETTINGS.PIE_COLORS.length]} />
 									))}
 								</Pie>
 								<Tooltip />
@@ -241,7 +221,7 @@ export const Dashboard = () => {
 									dataKey="value"
 								>
 									{departmentData.map((entry, index) => (
-										<Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+										<Cell key={`cell-${index}`} fill={SETTINGS.PIE_COLORS[index % SETTINGS.PIE_COLORS.length]} />
 									))}
 								</Pie>
 								<Tooltip />
@@ -269,7 +249,7 @@ export const Dashboard = () => {
 									dataKey="value"
 								>
 									{ticketStatusData.map((entry, index) => (
-										<Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+										<Cell key={`cell-${index}`} fill={SETTINGS.PIE_COLORS[index % SETTINGS.PIE_COLORS.length]} />
 									))}
 								</Pie>
 								<Tooltip />
@@ -297,7 +277,7 @@ export const Dashboard = () => {
 									dataKey="value"
 								>
 									{documentValidityData.map((entry, index) => (
-										<Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+										<Cell key={`cell-${index}`} fill={SETTINGS.PIE_COLORS[index % SETTINGS.PIE_COLORS.length]} />
 									))}
 								</Pie>
 								<Tooltip />
