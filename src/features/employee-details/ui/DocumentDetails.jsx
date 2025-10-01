@@ -25,7 +25,7 @@ export const DocumentDetails = ({ data, onSave }) => {
 	if (!(form instanceof Array)) {
 		return null
 	} else if (!form?.length) {
-		return <Typography variant="h2">Документы не добавлены</Typography>;
+		return <Typography variant="h2" className={styles.notFound} >Документы не добавлены</Typography>;
 	}
 
 

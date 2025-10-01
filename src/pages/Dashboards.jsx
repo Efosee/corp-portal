@@ -1,9 +1,5 @@
+import { Dashboard } from "../widgets/dashboard";
 
 export const Dashboards = () => {
-
-	return(
-		<div> 
-			Это будет главной страницей!
-		</div>
-	)
+	return <Dashboard />
 }

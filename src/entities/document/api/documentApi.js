@@ -16,6 +16,13 @@ class DocumentApi extends BaseApi {
 		return documentsData.map(documentData => new Document(documentData));
 	}
 
+	async getDocumentsValidityCount (params, options) {
+		const valid = await this.getTotalCount({valid: true});
+		const invalid = await this.getTotalCount({valid: false});
+
+		return {valid, invalid}
+	}
+
 }
 
 export const documentApi = new DocumentApi();

@@ -10,3 +10,4 @@ export { Tooltip } from './tooltip/Tooltip';
 export { Toolbar } from './toolbar/Toolbar';
 export {OpenBarButton} from './toolbar/OpenBarButton';
 export {Modal} from './modal/Modal';
+export { MetricCard } from './metric-card/MetricCard';

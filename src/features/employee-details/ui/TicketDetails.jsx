@@ -21,7 +21,7 @@ export const TicketDetails = ({ data, onSave }) => {
 	if (!(form instanceof Array)) {
 		return null;
 	} else if (!form?.length) {
-		return <Typography variant="h2">Заявки не добавлены</Typography>;
+		return <Typography variant="h2" className={styles.notFound}>Заявки не добавлены</Typography>;
 	}
 
 	return (

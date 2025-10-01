@@ -12,3 +12,5 @@ export { FamilyMember } from "./family-member/model/familyMember";
 export { familyMemberApi } from "./family-member/api/familyMemberApi";
 export { Ticket } from "./ticket/model/ticket";
 export { ticketsApi } from "./ticket/api/ticketApi";
+export { Analytics } from "./analytics/model/analytics";
+export { analyticsApi } from "./analytics/api/analyticsApi";

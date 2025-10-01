@@ -19,17 +19,26 @@
 		width: 70px;
 		height: 70px;
 		grid-row: 1/3;
+		align-self: center;
 	}
 	&Name{
 		grid-column-start: 2;
 		grid-row-start: 2;
 		color: #ffffff;
+		@media (max-width: 768px){
+			grid-row: 1/3;
+			font-size: 15px;
+			align-self: center;
+		}
 	}
 
 	&Title {
 		color: #ffffff;
 		font-weight: 900;
 		font-size: 25px;
+		@media (max-width: 768px){
+			display: none;
+		}
 	}
 
 	&Menu {}
@@ -54,10 +63,11 @@
       display: flex;
       justify-content: center;
       align-items: center;
+			cursor: pointer;
     }
 
 		.tabActive{
-			background-color: #c44242;
+			background-color: #3fb934;
 		}
   }
 
@@ -77,10 +87,17 @@
 		:global(.MuiSvgIcon-root) {
 			font-size: 28px;
 		}
+		@media (max-width: 768px){
+			
+		}
 	}
 
 	&Content{
 		height: calc(100vh - 200px);
 		overflow-y: auto;
+
+		@media (max-width: 768px){
+			height: calc(100vh - 300px);
+		}
 	}
 }

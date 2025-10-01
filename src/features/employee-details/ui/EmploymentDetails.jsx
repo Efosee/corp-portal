@@ -23,7 +23,7 @@ export const EmploymentDetails = ({ data, onSave }) => {
 	if (!(form instanceof Array)) {
 		return null;
 	} else if (!form?.length) {
-		return <Typography variant="h2">Места работы не добавлены</Typography>;
+		return <Typography variant="h2" className={styles.notFound}>Места работы не добавлены</Typography>;
 	}
 
 	return (

@@ -1,17 +1,37 @@
-.container{
+.container {
 	padding: 20px 30px;
 }
-.notFound{
+
+.notFound {
 	display: flex;
 	justify-content: center;
 
-	&:global(.css-o2za6n-MuiTypography-root){
+	&:global(.css-o2za6n-MuiTypography-root) {
 		margin-top: 40px;
 		color: #1976d2;
 		font-weight: 400;
+
+		@media (max-width: 768px) {
+			margin-top: 20px;
+			color: #1976d2;
+			font-weight: 400;
+			font-size: 20px;
+		}
 	}
 }
 
-.cancelBtn{
+.cancelBtn {
 	background-color: gray !important;
+
+	@media (max-width: 768px) {
+		font-size: 12px !important;
+		padding: 2px 10px !important;
+	}
+}
+
+.saveBtn {
+	@media (max-width: 768px) {
+		font-size: 12px !important;
+		padding: 2px 10px !important;
+	}
 }

@@ -23,7 +23,7 @@ export const EducationDetails = ({ data, onSave }) => {
 	if (!(form instanceof Array)) {
 		return null;
 	} else if (!form?.length) {
-		return <Typography variant="h2">Образование не добавлено</Typography>;
+		return <Typography variant="h2" className={styles.notFound}>Образование не добавлено</Typography>;
 	}
 
 	return (

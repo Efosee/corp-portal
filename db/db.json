@@ -2895,5 +2895,13 @@
       "updatedAt": "2025-02-27",
       "description": "Компьютер работает очень медленно, требуется проверка."
     }
-  ]
+  ],
+	"analytics": [
+    { "year": 2018, "employees": 42 },
+    { "year": 2019, "employees": 57 },
+    { "year": 2020, "employees": 73 },
+    { "year": 2021, "employees": 95 },
+    { "year": 2022, "employees": 120 },
+    { "year": 2023, "employees": 150 }
+	]
 }
