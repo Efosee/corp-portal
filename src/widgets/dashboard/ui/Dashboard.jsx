@@ -12,6 +12,7 @@ import { analyticsApi } from '../../../entities/analytics/api/analyticsApi';
 import { MetricCard } from '../../../shared/ui/metric-card/MetricCard';
 import styles from '../styles/dashboard.module.scss';
 import {SETTINGS} from '../config/settings';
+import { pluralYear } from '../../../shared/lib';
 
 export const Dashboard = () => {
 	const [metrics, setMetrics] = useState({
@@ -137,7 +138,7 @@ export const Dashboard = () => {
 				</Grid>
 				<Grid size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}>
 					<MetricCard
-						title="Активные заявки"
+						title="Активные заявки helpdesk"
 						value={metrics.activeTickets}
 						gradient={`linear-gradient(135deg, ${SETTINGS.COLORS.red[0]} 0%, ${SETTINGS.COLORS.red[1]} 100%)`}
 						icon={ConfirmationNumberIcon}
@@ -146,7 +147,7 @@ export const Dashboard = () => {
 				</Grid>
 				<Grid size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}>
 					<MetricCard
-						title="Документы в системе"
+						title="Документов в системе"
 						value={metrics.totalDocuments}
 						gradient={`linear-gradient(135deg, ${SETTINGS.COLORS.purple[0]} 0%, ${SETTINGS.COLORS.purple[1]} 100%)`}
 						icon={DescriptionIcon}
@@ -155,7 +156,7 @@ export const Dashboard = () => {
 				</Grid>
 				<Grid size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}>
 					<MetricCard
-						title="Образования"
+						title="Образований сотрудников"
 						value={metrics.totalEducations}
 						gradient={`linear-gradient(135deg, ${SETTINGS.COLORS.green[0]} 0%, ${SETTINGS.COLORS.green[1]} 100%)`}
 						icon={SchoolIcon}
@@ -165,7 +166,7 @@ export const Dashboard = () => {
 				<Grid size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}>
 					<MetricCard
 						title="Средний возраст сотрудников"
-						value={`${metrics.medianAge} лет`}
+						value={`${metrics.medianAge} ${pluralYear(metrics.medianAge)}`}
 						gradient={`linear-gradient(135deg, ${SETTINGS.COLORS.orange[0]} 0%, ${SETTINGS.COLORS.orange[1]} 100%)`}
 						icon={CakeIcon}
 						isLoading={loading}

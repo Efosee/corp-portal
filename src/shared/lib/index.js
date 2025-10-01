@@ -1,0 +1,2 @@
+export { pluralYear } from "./plural";
+
