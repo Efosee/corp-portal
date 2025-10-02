@@ -122,7 +122,7 @@ export const Dashboard = () => {
 	return (
 		<Box className={styles.dashboard}>
 			<Typography variant="h4" className={styles.title}>
-				Панель управления
+				Дашборды
 			</Typography>
 
 			{/* Метрики */}
